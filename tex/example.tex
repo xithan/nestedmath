@@ -1,0 +1,186 @@
+\documentclass[10pt,twoside]{scrreprt}
+\usepackage{amsthm,amsmath,amssymb,mathtools}
+\usepackage{packages/rooms}
+\usepackage{packages/definitions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% Definitions %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+%Usage:
+% \newdef [number of arguments]
+%         {name for makro}
+%         {content for makro}
+%         {alternative content used for glossary entry}
+%         {name of the defined term}
+%         {glossary section (a letter or Sym for symbols)
+%         {the actual definition}
+
+\newdef{V}{V}{}{space}{V}{%
+finite-dimensional complex inner-product space}
+
+\newdef{T}{T}{}{Hermitian operator}{T}{%
+Hermitian operator on \V.
+}
+
+\newdef[2]{innpro}{\langle #1, #2 \rangle}{\langle u, v \rangle}{inner product}{Sym}{%
+the inner product of two vectors $u$ and $v$.
+}
+
+\newdef{herm}{\text{Hermitian}}{}{Hermitian}{H}{%
+a operator $\T$ on a inner product space $\V$ is called Hermitian if $\innpro{T u}{v} = \innpro{u}{T v}$ for all vectors $u$ and $v$ in $\V$.}
+
+
+\newdef{orth}{^{\bot}}{U^{\bot}}{orthogonal complement}{Sym}{%
+the orthogonal complement for a subspace $U$ of $\V$ defined as the subspace
+$\{ v \in \V\innpro{v}{u}=0 \text{ for all } u \in U\}$
+}
+%(end)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% Structure of the assertions %%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+ 
+\begin{newstructure}{canonical-forms}
+    \newstate{completeness}{
+      \newstate{T-invariance}{}
+      \newstate{contains-characteristic-vector}{}
+    }
+    \newstate{orthonormal-basis}{
+      \newstate{lemma}{}
+    }
+\end{newstructure}
+
+%(end)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% Definition of the assertions %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+\defstate[\citepdf{Halmos}]{canonical-forms}{Theorem on canonical forms for Hermitian operators and matrices}{%
+Let $\V$ be a finite-dimensional complex inner-product space, and let $\T$ be a \hermname operator on $\V$. Then $\V$ has an orthonormal basis of charateristic vectors of $\T$.
+}
+
+\defstate{completeness}{}{%
+Let $U$ be the subspace $\V$ spanned by all characteristic vectors of $\T$. Then $U=\V$, i.e.m the characteristic vectors of $\T$ span the whole space.
+}
+
+\defstate{orthonormal-basis}{}{%
+$U$ has an orthonormal basis of characteristic vectors of $\T$.
+}
+
+\defstate{T-invariance}{}{%
+  $U\orth$ is $\T$-invariant.
+}
+
+\defstate{contains-characteristic-vector}{}{%
+Every nonzero $\T$-invariant subspace of $\V$ contains a characteristic vector of $\T$.
+}
+
+\defstate{lemma}{Lemma}{%
+Let $\T$ be a Hermitian operator. Then
+\begin{enumerate}
+  \item All the (complex) characteristic values of $\T$ are real.
+  \item Characteristic vectors of $\T$ that belong to distinct characteristic values are orthogonal.
+\end{enumerate}
+}
+
+%(end)
+
+% \pagenumbering{arabic}
+% \newcommand{\pagehook}{\getroomnr{\roomname} \roomtitle{\roomname}}
+% %\fancyhf{}
+% \fancyhead{}
+% \fancyfoot{}
+% \fancyhead[LE,RO]{{\sffamily{\nouppercase\rightmark}}} %{{\sffamily \pagehook}}  %\slshape \righmark
+% %\fancyhead[LO,RE]{\scshape }
+% %\fancyhead[RE,LO]{\textit{\getroomnr{\roomname} \roomtitle{\roomname}}}
+% \fancyfoot[LE,RO]{\scshape\thepage}
+% \pagestyle{fancy}
+
+
+
+
+\begin{document}
+  \pagenumbering{arabic}
+The  following  example is taken from \citepdf{Leron(1983)}.
+\section*{Level 1}
+\setroom{canonical-forms}
+\roomtree{
+  \subroom{completeness}
+  \subroom{orthonormal-basis}
+}
+ 
+\begin{proof} 
+Cleary the two assertions \refstate{completeness} and \refstate{orthonormal-basis} 
+yield the conclusion of Theorem \refstate{canonical-forms}.
+\end{proof}
+  
+\elevator
+From here on the proof branches to two independent subproofs, 
+rooted at \refstate{completeness} and \refstate{orthonormal-basis}. 
+Note that while the presentation proceeds strictly top-down, 
+it does not force a top-down \emph{reading} of the proof. 
+Some readers may prefer, for example, 
+to read through the first branch (\refstate{completeness}) all the way to the bottom, 
+then return to Level 2 and start on the second branch (\refstate{orthonormal-basis}).
+
+
+\setroom{completeness}
+\section*{Level 2}
+\roomtree{
+  \subroom{T-invariance}
+  \subroom{contains-characteristic-vector}
+}
+\begin{proof}
+To prove $U=\V$ we prove the equivalent statement $U\orth = \left\{ 0 \right\}$. 
+This in turn will follow from \refstate{T-invariance} and \refstate{contains-characteristic-vector}. 
+Since $U\orth$ cannot contain a characteristic vector of $\T$ 
+(this would contradict $U \cap U\orth = \left\{ 0 \right\}$), 
+we must have $U\orth = \left\{ 0 \right\}$, hence $U=\V$.
+\end{proof}
+  
+
+\setroom{orthonormal-basis}
+\roomtree{
+  \subroom{lemma}
+}
+\begin{proof}
+Let $\lambda_1, \ldots \lambda_k$ be distinct characteristic values of $\T$, 
+and let $U_1, \ldots , U_k$ be there respective characteristic spaces:
+\[
+  U_i = \left\{ v \in \V \;|\; T v = \lambda_i v  \right\}.
+\]
+By the Gram-Schmidt orthogonalization process 
+we can construct an orthonormal basis $B_i$ to each subspace $U_i$, 
+and it turns out that without any more car on our part, 
+the set $B = B_1 \cup \cdots \cup B_k$ already forms an orthonormal basis for $\V$. 
+This is due to the important lemma proved in \refstate{lemma}: 
+
+Characteristic vectors of $\T$ that belong to distinct characteristic values are orthogonal. 
+Thus if $i \neq j$, $B_i$ and $B_j$ are orthogonal, 
+hence $B$ is indeed an orthonormal basis for $U$. 
+Since $B$ consists of characteristic vectors of $\T$, 
+it satisfies all the requirements of Level \refstate{orthonormal-basis}
+\end{proof}
+
+\elevator
+We leave out the proofs of \refstate{T-invariance}, \refstate{contains-characteristic-vector} and \refstate{lemma}, 
+since Level 3 is the bottom level and the proofs appear in it in their standard (linear) form (see \citepdf{hoffman}{pp. 312-313}). 
+Note, however, that it is only in \refstate{T-invariance} and \refstate{lemma} 
+that the main hypothesis of the theorem (namely that $\T$ is Hermitian) finally enters the proof.
+In contrast, \refstate{contains-characteristic-vector} is true for operators on complex spaces in general.
+  
+  
+\roomservice
+\begin{treedef}
+  \rootnode{V}
+  \rootnode{T}
+  \node{herm}
+  \rootnode{orth}
+  % \subnode{}
+\end{treedef}
+
+\bibliography{example}
+\bibliographystyle{alpha}
+\end{document}

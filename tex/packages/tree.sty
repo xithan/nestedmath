@@ -1,0 +1,410 @@
+\NeedsTeXFormat{LaTeX2e}
+%%%
+%%% tree.sty
+%%%
+%%% Ver 0.1 tree.sty written by Philipp Kuehl <2014/05/04>
+
+
+\ProvidesPackage{tree}[2014/05/04 Package for organizing content in tree structures]
+\typeout{`tree.sty' package v0.1 for drawing trees.}
+
+\RequirePackage{color}
+
+
+\setlength{\marginparsep}{5mm}
+\setlength{\marginparwidth}{30mm}
+
+\definecolor{boxblue}{rgb}{1,1,0.8}
+
+\newcounter{paras}
+\newenvironment{hangnode}[2]{%
+\setcounter{paras}{0}%
+\everypar{\stepcounter{paras}%
+\ifnum\value{paras}>1\hangpara{1cm}{0}\else\hangpara{1cm}{1}\fi}%   
+}%
+{\everypar{}}
+
+\newcommand{\entrynewline}{\\\entryindent%
+}
+\newcommand{\entryindent}{}
+
+\edef\DTAtCode{\the\catcode`\@}
+\catcode`\@=11
+\long\def\LOOP#1\REPEAT{%
+  \def\ITERATE{#1\relax\expandafter\ITERATE\fi}%
+  \ITERATE
+  \let\ITERATE\relax
+}
+\let\REPEAT=\fi
+\expandafter\ifx\csname DT@fromsty\endcsname\relax
+  \def\@namedef#1{\expandafter\def\csname #1\endcsname}
+  \def\@nameuse#1{\csname #1\endcsname}
+  \long\def\@gobble#1{}
+\fi
+\def\@nameedef#1{\expandafter\edef\csname #1\endcsname}
+\def\@nameundef#1{\expandafter\let\csname #1\endcsname\@undefined}
+\newdimen\DT@offset \DT@offset=0.2em
+\newdimen\DT@width \DT@width=1em
+\newdimen\DT@sep \DT@sep=0.2em
+
+\newdimen\DT@entryskip \DT@entryskip=8pt  % Platz zwischen den Eintraegen
+\def\DT@ansatz{0.5}  % Bei wievel PRozent der Zeilenhoehe (baselineskip) soll der Tree andocken
+\newdimen\DT@all
+\DT@all=\DT@offset
+\advance\DT@all \DT@width
+\advance\DT@all \DT@sep
+\newdimen\DT@rulewidth \DT@rulewidth=0.4pt
+\newdimen\DT@dotwidth \DT@dotwidth=0pt%1.6pt  % Punkte bei den Kreuzungen, Standard war 1.6pt
+\newdimen\DTbaselineskip \DTbaselineskip=\baselineskip
+\newdimen\DT@entry@vsize  % Total Height of the current entry including margin to the next entry
+\newdimen\DT@entry@dp
+\newdimen\DT@entry@ht \DT@entry@ht=\DT@ansatz\DTbaselineskip
+\newdimen\DT@line@ht \DT@line@ht=\DT@ansatz\DTbaselineskip
+\newdimen\DT@correction \DT@correction=\z@
+\newdimen\DT@hook@vsize
+\newdimen\DT@hook@dp
+\newdimen\DT@hook@ht
+\advance\DT@line@ht by1pt
+\newcount\DT@counti
+\newcount\DT@countii
+\newcount\DT@countiv
+\newcount\DT@count@prev
+
+\def\DTsetdefault{%
+	\DTsetlength{0.2em}{1.em}{0.2em}{0.4pt}{0pt}{0.5}{8pt}{0pt}
+}
+\def\DTsetlength#1#2#3#4#5#6#7#8{%
+  \DT@offset=#1\relax
+  \DT@width=#2\relax
+  \DT@sep=#3\relax
+  \DT@all=\DT@offset
+  \advance\DT@all by\DT@width
+  \advance\DT@all by\DT@sep
+  \DT@rulewidth=#4\relax
+  \DT@dotwidth=#5\relax
+  \def\DT@ansatz{#6}
+  \DT@entryskip=#7\relax
+  \DT@entry@ht=\DT@ansatz\DTbaselineskip
+  \DT@line@ht=\DT@ansatz\DTbaselineskip
+  \advance\DT@line@ht by1pt
+  \DT@correction=#8
+}
+
+\expandafter\ifx\csname DT@fromsty\endcsname\relax
+  \def\DTstyle{}%\tt}
+  \def\DTstylecomment{\rm}
+  \def\DTlinecolor{black}
+\else 
+  \def\DTlinecolor{black}
+  \def\DTstyle{}%\ttfamily}
+  \def\DTstylecomment{\rmfamily}
+\fi
+\def\DTcomment#1{%
+  \kern\parindent\dotfill
+  {\DTstylecomment{#1}}%
+}
+\newdimen\DT@indent
+\newdimen\DT@parskip
+\newdimen\DT@baselineskip
+
+\def\deftree#1{%
+	\DT@counti=\z@
+    \let\next\DT@readarg
+    \next#1\@nil
+	\noargotree\relax
+}
+
+
+
+\def\noargotree{%
+  %Die Hoehe (ht) der Box bestimmt wo der Strich andockt.
+  %Deshalb wird die Hoehe immer auf den konstanden Wert DT@ansatz * baselineskip gesetht
+  %Damit sich die Hoehe der Box nicht aender wird die Tiefe so angepasst, dass die Gesamthoehe gleichbleibt
+  \DT@indent=\parindent
+  \parindent=\z@
+  \DT@parskip=\parskip
+  \parskip=\z@
+  \DT@baselineskip=\baselineskip
+  \baselineskip=\DTbaselineskip
+  \let\DT@strut=\strut
+  \def\strut{\vrule width\z@ height0.7\baselineskip depth0.3\baselineskip}%
+  % \edef\DT@hsize{\the\hsize}%
+  % \advance\hsize by-\@nameuse{DT@level@1}\DT@width
+  % \advance\hsize by-\@nameuse{DT@level@1}\DT@width
+  % \setbox\z@=\vbox{\@nameuse{DT@body@1}}% 
+  % \hsize=\DT@hsize
+  % %\par
+%  \leavevmode
+  %   \dimen\z@=\hsize
+  %   \advance\dimen\z@ -\@nameuse{DT@level@1}\DT@offset
+  %   \advance\dimen\z@ -\@nameuse{DT@level@1}\DT@width
+  %   \setbox\z@=\vbox{\@nameuse{DT@body@1}}%  
+  %   \DT@entry@vsize=\ht\z@
+  %   \advance\DT@entry@vsize by\dp\z@
+  %   \DT@entry@dp=\DT@entry@vsize % Tiefe berchnen
+  %     \advance\DT@entry@dp by-\DT@ansatz\baselineskip %\DT@entry@ht
+  %   \advance\DT@entry@dp by\DT@entryskip
+  %     \advance\DT@entry@dp by-\DT@correction
+  %   \dp\z@=\DT@entry@dp  % Tiefe setzen 
+  %   \ht\z@=\DT@entry@ht  % Hoehe setzen
+  %   \par\leavevmode  
+  %   \kern\@nameuse{DT@level@1}\DT@offset  % Wenn man mit Level0 anfaengt, ist der ganze Baum nicht eingerueckt
+  %   \kern\@nameuse{DT@level@1}\DT@width
+  % \ifcsname DT@line@1@entry@1\endcsname\relax
+  %   \dimen\z@=\DT@entry@dp  % Wo die Linen anfangen sollen, die unten an den Text andockt
+  %   \advance\dimen\z@ by-\DT@entryskip
+  %   \kern \DT@offset
+  %   \kern -0.5\DT@rulewidth
+  %   \hbox{\vbox to\z@{\vss\hrule width\DT@rulewidth depth\DT@entry@dp height-\dimen\z@}}%
+  %   \kern -\DT@offset%
+  %   \kern -0.5\DT@rulewidth
+  %   \expandafter\let\csname DT@line@1@entry@1\endcsname\@undefined
+  % \fi
+  %   \box\z@
+  %   \endgraf
+	  	  %\DT@countii=\@ne
+        \DT@countii=\z@
+  \loop
+  \ifnum\DT@countii<\DT@counti
+    \advance\DT@countii \@ne
+    \leavevmode
+    \edef\DT@hsize{\the\hsize}%
+    \count@=\@nameuse{DT@level@\the\DT@countii}\relax
+    \dimen\z@=\count@\DT@all%-\DT@all
+    \advance\hsize by-\dimen\z@%
+    \ifcsname DT@connectnodes\endcsname\relax  % Die Verbindungslinien zu Elternkonten sollen direkt zur Node und nicht unterhalb des Elterntextes enden
+        \ifcsname DT@isparent@\the\DT@countii\endcsname\relax  % Dieser Knoten hat Kinder
+          % Text einruecken um Platz fuer die Verbindungslinie zu machen
+          %\setbox\z@=\vbox{\begin{hangnode}{\DT@indent}{1}\@nameuse{DT@body@\the\DT@countii}\end{hangnode}}%
+          \setbox\z@=\vbox{%
+          \def\entryindent{\hspace\DT@indent}%
+          \begin{hangparas}{\DT@indent}{1}\@nameuse{DT@body@\the\DT@countii}\end{hangparas}%
+          \def\entryindent{}%
+          }%
+          \setbox3=\vbox{\@nameuse{DT@hook@\the\DT@countii}}%
+          \DT@hook@vsize=\ht3%
+          \advance\DT@hook@vsize by\dp3%
+        \else%
+          \setbox\z@=\vbox{\@nameuse{DT@body@\the\DT@countii}}%
+        \fi%
+    \else
+      \setbox\z@=\vbox{\@nameuse{DT@body@\the\DT@countii}}%
+    \fi
+    \hsize=\DT@hsize
+	\DT@entry@vsize=\ht\z@
+	\advance\DT@entry@vsize by\dp\z@
+	\DT@entry@dp=\DT@entry@vsize
+	\advance\DT@entry@dp by\DT@entryskip
+	\advance\DT@entry@dp by -\DT@entry@ht
+	\dp\z@=\DT@entry@dp  % Hoehe vom Andockpunkt bis dahin wo der naechste Eintrag anfangen wird
+	\ht\z@=\DT@entry@ht
+  \count@=\z@
+	\DT@countiv=\z@  % Von erster Linienposition bis zur Linienposition des aktuellen Eintrages
+	% vertical rules
+  \ifnum\@nameuse{DT@level@\the\DT@countii}>0\relax   % nicht auf rootebene
+    \kern \DT@offset
+     	\LOOP
+     		\advance\DT@countiv \@ne
+     		\ifnum\DT@countiv=\@nameuse{DT@level@\the\DT@countii}\relax   % Wir sind auf Hoehe  des Eintrages
+     			\kern -0.5\DT@rulewidth
+     			\ifcsname DT@line@\the\DT@countiv @entry@\the\DT@countii\endcsname\relax  % Nach oben und unten verbinden
+     				\textcolor{\DTlinecolor}{\hbox{\vbox to\z@{\vss\hrule width\DT@rulewidth height\DT@line@ht depth\DT@entry@dp}}}%
+     			\else % nur nach oben verbinden
+     				\textcolor{\DTlinecolor}{\hbox{\vbox to\z@{\vss\hrule width\DT@rulewidth height\DT@line@ht}}}%
+     			\fi
+     			\kern -0.5\DT@rulewidth
+     		\else
+     			\ifnum\DT@countiv>\@nameuse{DT@level@\the\DT@countii}\relax   % Kommt unterhalb des Eintrages noch ein Eintrag, der ein Vebindungslinie hierher hat
+     			  \ifcsname DT@line@\the\DT@countiv @entry@\the\DT@countii\endcsname\relax
+     					\dimen\z@=\DT@entry@dp
+              \ifcsname DT@connectnodes\endcsname\relax % Linie soll direkt bei Elternnode anfangen
+                \advance\dimen\z@ by-\DT@entryskip 
+                %\advance\dimen\z@ by-\DT@entry@dp 
+                %\advance\dimen\z@ by-\DT@hsize
+                \advance\dimen\z@ by-\DT@entry@vsize
+                \advance\dimen\z@ by\DT@hook@vsize
+                %\advance\dimen\z@ by5pt
+                %\advance\dimen\z@ by1.5pt
+                %\advance\dimen\z@ by\DTbaselineskip
+                %\advance\dimen\z@ by-\DT@line@ht
+              \else % Linie soll unterhalt des Textes anfangen
+     					  \advance\dimen\z@ by-\DT@entryskip  % Wo die Linen anfangen sollen, die unten an den Text andockt
+              \fi
+              \kern \DT@all
+              \kern -0.5\DT@rulewidth
+              \textcolor{\DTlinecolor}{\hbox{\vbox to\z@{\vss\hrule width\DT@rulewidth depth\DT@entry@dp height-\dimen\z@}}}%
+              \kern -\DT@all
+     					\kern -0.5\DT@rulewidth
+     				\fi
+     				\count@=\@ne  % Jetzt ist Schluss
+           \else  % Nach oben andocken
+     				\ifcsname DT@line@\the\DT@countiv @entry@\the\DT@countii\endcsname\relax%
+     					\kern -0.5\DT@rulewidth%
+     					\textcolor{\DTlinecolor}{\hbox{\vbox to\z@{\vss\hrule width\DT@rulewidth depth\DT@entry@dp height\DT@line@ht}}}%
+     					\kern -0.5\DT@rulewidth%
+     				\fi
+     				\kern \DT@all%
+     			\fi
+     		\fi
+     		\expandafter\let\csname DT@line@\the\DT@countiv @entry@\the\DT@countii\endcsname\@undefined	%
+     	\ifnum\count@=\z@%
+  	   \REPEAT	
+	% horizontal rule and dot
+    \expandafter\ifx\csname DT@nolink@\the\DT@countii\endcsname\relax  %Eintrag ist keine Zwischenueberschrift
+       \expandafter\ifx\csname DT@corollary@\the\DT@countii\endcsname\relax  %Eintrag ist kein Korollar
+       \textcolor{\DTlinecolor}{%
+          \kern-0.5\DT@rulewidth%
+          \kern-0.5\DT@dotwidth%
+          \vrule width\DT@dotwidth height0.5\DT@dotwidth depth0.5\DT@dotwidth%
+          \kern-0.5\DT@dotwidth%
+          \vrule width\DT@width height0.5\DT@rulewidth depth0.5\DT@rulewidth%
+        }%
+       \else
+          \kern-0.5\DT@rulewidth%
+          \raisebox{-1pt}{\textcolor{\DTlinecolor}{\rlap{$\Rightarrow$}}}% 
+          \kern\DT@width%
+       \fi
+   \else
+      \kern \DT@width%
+   \fi
+       \kern\DT@sep%
+  \else%Root 
+    %Es muss nur Verbindungslinie nach unten getestet werden
+		\ifcsname DT@line@1@entry@\the\DT@countii\endcsname\relax%
+        \advance\DT@entry@dp by-\DT@correction  % Aus irgendwelchen Gruenden hat der erste Eintrag manchmal zu viel Glue
+        \dp\z@=\DT@entry@dp% 
+				\dimen\z@=\DT@entry@dp%
+        %
+        %
+				%\advance\dimen\z@ by-\DT@entryskip  % Wo die Linen anfangen sollen, die unten an den Text andockt
+        \ifcsname DT@connectnodes\endcsname\relax % Linie soll direkt bei Elternnode anfangen
+          \advance\dimen\z@ by-\DT@entryskip% 
+          %\advance\dimen\z@ by-\DT@entry@dp 
+          %\advance\dimen\z@ by-\DT@hsize
+          \advance\dimen\z@ by-\DT@entry@vsize%
+          \advance\dimen\z@ by\DT@hook@vsize%
+        \else % Linie soll unterhalt des Textes anfangen
+				  \advance\dimen\z@ by-\DT@entryskip % Wo die Linen anfangen sollen, die unten an den Text andockt
+        \fi%
+        %
+        \kern \DT@offset%
+        \kern -0.5\DT@rulewidth%
+        \hbox{\vbox to\z@{\vss\hrule width\DT@rulewidth depth\DT@entry@dp height-\dimen\z@}}%
+        \kern -\DT@offset%
+				\kern -0.5\DT@rulewidth%
+        \expandafter\let\csname DT@line@1@entry@\the\DT@countii\endcsname\@undefined%
+    \fi%
+  \fi%
+    \box\z@%
+    \endgraf%
+  \repeat%
+  \parindent=\DT@indent%
+  \parskip=\DT@parskip%
+  \baselineskip=\DT@baselineskip%
+  \let\strut\DT@strut%
+  \@nameundef{DT@connectnodes}%
+}
+\def\DT@readarg.#1 #2** #3\@nil{%
+  \advance\DT@counti \@ne
+  \@namedef{DT@level@\the\DT@counti}{#1}%
+  \@namedef{DT@body@\the\DT@counti}{\strut{\DTstyle{#2}\strut}}%
+  \ifx\relax#3\relax
+    \let\next\@gobble
+  \fi
+  \next#3\@nil
+}
+
+
+%
+\newcommand{\newboolname}[1]{%
+\expandafter\newif\csname if#1\endcsname
+\csname #1true\endcsname
+}
+\newcommand{\setfalse}[1]{%
+\csname #1false\endcsname%
+}
+
+\newcommand{\newtree}{\DT@counti=\z@\relax}
+
+\newcommand{\newconnectedtree}{\connectnodes\DT@counti=\z@\relax}
+
+\newcommand{\treesection}[1]{%
+\treechild[\nolink]{1}{\textbf{#1}\nopagebreak}%
+}
+
+\newcommand{\connectedtreeroot}[2]{%
+  \expandafter\treeroot{#1}%
+  \@namedef{DT@hook@\the\DT@counti}{#2}%
+}
+\newcommand{\connectedtreechild}[4][]{%
+  \treechild[#1]{#2}{#3}%
+  \@namedef{DT@hook@\the\DT@counti}{#4}%
+}
+
+\newcommand\treeroot[1]{%
+	\advance\DT@counti \@ne%
+  \@namedef{DT@level@\the\DT@counti}{0}\relax%
+  \@namedef{DT@body@\the\DT@counti}{\strut{\DTstyle{#1}\strut}}%
+  %\@namedef{DT@body@\the\DT@counti}{#1}%
+  \@nameundef{DT@nolink@\the\DT@counti}%
+  \@nameundef{DT@corollary@\the\DT@counti}%
+  \@nameundef{DT@grouplink@\the\DT@counti}%
+  %\@nameundef{DT@connectnodes}
+  \expandafter\let\csname DT@line@1@entry@\the\DT@counti\endcsname\@undefined%
+  %\@nameundef{DT@line@1@entry@\the\DT@counti}
+}
+
+\newcommand{\treecorollary}[2]{%
+   \treechild[\corollarylink]{#1}{#2}%
+}
+
+\newcommand{\treechild}[3][]{%
+  \DT@count@prev=\DT@counti%
+	\advance\DT@counti \@ne%
+    \@namedef{DT@level@\the\DT@counti}{#2}%
+    %\@namedef{DT@body@\the\DT@counti}{\strut{\DTstyle{\hangindent=0.7cm #3\strut}}}%
+    \@namedef{DT@body@\the\DT@counti}{\strut{\DTstyle{#3}\strut}}%
+    \@nameundef{DT@corollary@\the\DT@counti}%
+    \@nameundef{DT@isparent@\the\DT@counti}%
+    \@nameundef{DT@grouplink@\the\DT@counti}%
+    \@nameundef{DT@nolink@\the\DT@counti}%
+    \@nameundef{DT@line@1@entry@\the\DT@counti} % Aus irgendwelchen Gruenden klappt das loeschen der Linien auf der ersten Ebene vom vorherhigen Baum nicht so richtig. Hat wahrscheinlich irgendetwas mit den Groupnodes zutun
+   \ifx\\#1\\\else#1\fi% strichanbindung entferen oder Corollar-Doppelpfeil setzen
+   %
+   \expandafter\ifx\csname DT@grouplink@\the\DT@counti\endcsname\relax% Grouplink. Eintrag auf der gleichen Ebene mit der vorherigen vernknuepfen 
+    %  
+   \else%
+      \DT@countiv=\DT@counti%
+      \advance\DT@countiv \m@ne%
+      \@namedef{DT@line@1@entry@\the\DT@countiv}{\relax}%
+      \@namedef{DT@isparent@\the\DT@count@prev}{\relax}%
+   \fi%
+   %
+	\ifnum\@nameuse{DT@level@\the\DT@counti}>\z@\relax% Eintraege auf Level 0 haben keine Verbindung nach oben, werden also ignoriert
+	\DT@countiv=\DT@counti%
+	\count@=\z@%
+	\loop%
+		\ifnum\count@=\z@%
+		\advance\DT@countiv \m@ne% Eintrage nach oben gehen bis der Andockeintrag gefunden ist und  auf dem Weg dahin fuer alle anderen Eintraege die Linie setzen
+         \ifnum\@nameuse{DT@level@\the\DT@countiv} > \@nameuse{DT@level@\the\DT@counti}\relax% Nachfahren der gleichen Eltern uber diesem Eintrag
+   			\@namedef{DT@line@#2@entry@\the\DT@countiv}{\relax}%
+   		\else  % Wir haben einen Eintrag erreicht auf gleichem Level oder weniger eingerueckt
+   			\count@=\@ne%
+   			\ifnum\@nameuse{DT@level@\the\DT@countiv}=\@nameuse{DT@level@\the\DT@counti}\relax% Ein Geschwistereintrag
+   				\@namedef{DT@line@#2@entry@\the\DT@countiv}{\relax}%
+   			\else
+   				\@namedef{DT@line@#2@entry@\the\DT@countiv}{\relax}% Der Elterneintrag
+          \@namedef{DT@isparent@\the\DT@countiv}{\relax}
+   			\fi%
+   		\fi%
+	\repeat%
+	\fi%
+}
+
+
+\newcommand{\corollarylink}{\@namedef{DT@corollary@\the\DT@counti}{\relax}}
+\newcommand{\nolink}{\@namedef{DT@nolink@\the\DT@counti}{\relax}}
+\newcommand{\connectnodes}{\@namedef{DT@connectnodes}{\relax}}
+\newcommand{\grouplink}{\@namedef{DT@grouplink@\the\DT@counti}{\relax}}  % Der Eintrag obendrueber ist mit Elternknoten der Kinder
+		
+\catcode`\@=\DTAtCode\relax

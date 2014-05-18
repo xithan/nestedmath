@@ -1,0 +1,968 @@
+\NeedsTeXFormat{LaTeX2e}
+%%%
+%%% rooms.sty
+%%%
+%%% Ver 0.1 room.sty written by Philipp Kuehl <2014/05/04>
+
+
+\ProvidesPackage{rooms}[2014/05/04 Package for structuring math statements]
+\typeout{`rooms.sty' package v0.1 for structuring math.}
+
+\let\CoCite\cite
+%\xdef\CCCite#1{\cite{#1}}
+
+\RequirePackage{etex} % We run out of dimension registers. This fixes it.
+\RequirePackage{etoolbox}
+%\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+%RequirePackage{lmodern}
+\RequirePackage{cite}
+
+\let\myPhi\Phi
+
+% Stephans Pakete
+% \usepackage[a-1b]{pdfx}
+\RequirePackage{microtype} % Rand optisch gerade 
+\RequirePackage{ellipsis}
+% \usepackage{extdash}
+
+\RequirePackage[authoryear]{natbib}
+\RequirePackage{bibentry}
+%\nobibliography*
+\RequirePackage{amsmath}
+\RequirePackage{amsthm}
+\RequirePackage{mathtools}
+\RequirePackage{multicol}
+%\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
+\renewcommand\mathfrak[1]{\mbox{\usefont{U}{euf}{m}{n}#1}} % Ansonsten gibt es einen "too many alphaebets" error
+%\RequirePackage{eufrak}
+%\RequirePackage{xytree}
+\RequirePackage{stmaryrd }
+\RequirePackage{booktabs}     % professionelles Tabellenlayout 
+\RequirePackage{marginnote} % Für randbemerkung in Theoremumgebungen http://tex.stackexchange.com/questions/23327/how-to-patch-a-floating-environment-so-that-the-patched-command-floats
+\RequirePackage{changepage} %  Für die Ausrichtung der Randeinträge
+% \strictpagecheck Was genau tut der Befehl?
+%\RequirePackage{ngerman}
+
+\RequirePackage[notcomma,notperiod,notquote,notquery,notexcl,notcolon,notscolon]{hanging}
+\RequirePackage{calc}
+\RequirePackage{ifthen}
+\RequirePackage{color}
+\RequirePackage{ifpdf}
+\RequirePackage{tikz}
+\RequirePackage{colonequals}  % colons centered around the math axis
+\usetikzlibrary{positioning}
+%\RequirePackage{pdfsync}
+%\RequirePackage{Header/mathtree}
+
+%\RequirePackage{mathtree}
+%\RequirePackage[all]{xy}
+
+%\SelectTips{cm}{}
+
+% Schriftarten
+
+
+\RequirePackage[mathscr]{eucal}
+\let\mathcalold\mathcal
+\RequirePackage{calrsfs}
+
+%\RequirePackage{cmbright} % ohne Serifen
+%\RequirePackage[sc]{mathpazo}
+\RequirePackage{tgpagella}
+%\RequirePackage[sfdefault]{AlegreyaSans}
+%\RequirePackage[T1]{fontenc}
+\linespread{1.05}
+
+
+\RequirePackage{rotating}
+\RequirePackage[normalem]{ulem} % Unterstreichen
+\RequirePackage{framed}
+\RequirePackage{refcount} % Aus Label counterfähige Zahlen machen
+\RequirePackage{alphalph} % Doppelbuchstabennumerierung
+\RequirePackage{environ} % Umgebungsinhalt in einem Makro bekommen
+\RequirePackage{varwidth}
+\RequirePackage{xspace} % space am Ende von Befehlen
+\RequirePackage{dsfont} % doublestroke auch für Zahlen \mathds{...} (fetter als bbm)
+\RequirePackage{bbm} % doublestroke auch für Zahlen \mathbbm
+\RequirePackage{tensor} % pre-subscripts
+\RequirePackage{mparhack} % marginparhack, sorgt dafür dass die Randeinträge auch am Anfag der Seite auf den richtigen Rand kommen
+%\RequirePackage{enumerate} % bequeme Anpassung der Nummerierung mit z.B. \enumerate[I]
+\RequirePackage{enumitem}
+\RequirePackage[colorinlistoftodos,textsize=footnotesize]{todonotes}
+%\RequirePackage{mathabx}  % fuer CircleArrows ?? nie getestet, ob es tatsächlich notwendig 
+ % extend alphabetic nummeration e.g. aa
+\RequirePackage{pageslts}%
+%\RequirePackage{fancyhdr}
+% \usepackage[
+%   textwidth=16.5cm,
+%   outer=1.5cm,
+%   textheight=45\baselineskip,
+%   headheight=\baselineskip,
+%   includehead=false,% Default
+%   heightrounded,
+% ]{geometry}
+\RequirePackage[textwidth=418.25372pt, outer=3.3cm]{geometry}
+\RequirePackage{zref-abspage}
+\RequirePackage{zref-user}
+\RequirePackage{tikz-cd}
+\RequirePackage[symbol*]{footmisc}
+%\RequirePackage{header/diagxy} % Kommutative Diagramme mit tikz
+\ifpdf % => pdf output
+%    \RequirePackage[all]{xy}           % fuer kommutative Diagramme etc
+    %\SelectTips{cm}{}              % die ``richtigen'' Pfeilspitzen fuer xypic mit Computer Modern fonts
+%    \usepackage[pdftex]{graphicx}  % zum Einbinden von Graphiken
+    \RequirePackage[pdftex,colorlinks=true,filecolor=black,linkcolor=black,citecolor=black,urlcolor=black,a4paper,hypertexnames=true,plainpages=false]{hyperref} % fuer (pdf-)Hyperlinks%pagebackref,
+ %\usepackage[pdftex,a4paper,plainpages=false]{} % fuer (pdf-)Hyperlinks
+    % pdftex:      pdf-Backend
+    % colorlinks:  macht die Links farbig -- statt Kaestchen
+    % pagebackref: fuegt in der Bibliographie Referenzen ein, auf
+    %              welchen Seiten das entsprechende Dokument zitiert wurde
+  %  \hypersetup{pdfauthor=Philipp K"uhl,pdftitle=Diplomarbeit}
+\else% => dvi outputi
+%\newcommand{\wref}[2]{\href{/home/phi/Doktorarbeit/wiki/#1.dvi}{#2}}
+ %   \RequirePackage[all, dvips]{xy}
+    %\def\pgfsysdriver{pgfsys-dvips.def}
+    %\usepackage{tikz}
+    %\SelectTips{cm}{}
+%    \usepackage{graphicx}
+    \RequirePackage[colorlinks,linkcolor=blue,citecolor=blue,urlcolor=blue,a4paper,hypertexnames=true,plainpages=false]{hyperref}
+%  \usepackage[hypertexnames=true,plainpages=false]{hyperref}%pagebackref,
+\fi
+%\RequirePackage{Header/posterbox}
+\RequirePackage{pigpen}
+\RequirePackage{mdframed}
+
+
+\RequirePackage{packages/tree}
+% \RequirePackage{mdframed}
+% \RequirePackage{environ}
+% %\RequirePackage[authoryear]{natbib}
+% %\RequirePackage{bibentry}
+% \RequirePackage{amsthm}
+% \RequirePackage{alphalph} % Doppelbuchstabennumerierung
+% \RequirePackage{ifthen}
+% %\RequirePackage{pageslts}
+\RequirePackage{fancyhdr}
+% \RequirePackage{cite}
+% \RequirePackage[symbol*]{footmisc}
+% \RequirePackage[textwidth=418.25372pt, outer=3.3cm]{geometry}
+% \RequirePackage{zref-abspage}
+% \RequirePackage{zref-user}
+% \ifpdf % => pdf output
+% \RequirePackage[pdftex,colorlinks=true,filecolor=black,linkcolor=black,citecolor=black,urlcolor=black, hypertexnames=true]{hyperref} % fuer (pdf-)Hyperlinks%pagebackref,
+% \else% => dvi outputi
+% \RequirePackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,hypertexnames=true]{hyperref}
+% \fi
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% TSO %%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+%(end)
+
+
+\newcommand{\roomlevel}{\subsection}
+\newcommand{\roomtoclevel}{section}
+\newcommand{\afterroomtree}{%
+  %~\\[1ex]
+  \noindent
+}
+
+
+
+% \DeclareOption{screen}{
+% 
+% }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dinge die fuer Mathview angepasst werde muessen %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+\newcommand{\roomlink}[2]{\hyperlink{#1room}{#2}}  % Link zum Begin eines neuen Raumabschnitts
+%(end)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% Link-Targets %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+% Targets fuer Links
+% Linkfizierte Raumnummer werden nach \label{\statealph{#1}} verlinkt. Dieses Target wird momenta in roomtarget, also beid er Roomueberschrift gesetzt 
+\newcommand{\leveltarget}[1]{\hypertarget{#1level}{}}  % Hier faengt ein neueer Level an
+
+\newcommand{\roomtarget}[1]{\label{#1}\label{#1room}\hypertarget{#1room}{}\hypertarget{\statealph{#1}room}{}\expandafter\label{\statealph{#1}}}  % Hier faengt der Raum an
+\newcommand{\firstusetarget}[1]{\hypertarget{#1firstuse}{}}   % Die erste Verwendung im Beweis
+\newcommand{\treeroottarget}[1]{\hypertarget{#1treeroot}{}}  % Raum ist die Wurzel eines Raumbaumes
+\newcommand{\treechildtarget}[1]{\hypertarget{#1treechild}{}}  % Raum wird zum ersten Mal als Kind in einem Raumbaum aufgefuehrt
+\newcommand{\prooftarget}[1]{\hypertarget{#1proof}{}}  % Der Start des Beweises fuer den Raum
+%(end)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% Counter %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+\newcounter{tempcnt}
+\newcounter{roomnr} % Zaehlt die letzte Ziffer der Zimmernummer, sollte eigentlich besser roomlastdigit heißen
+\setcounter{roomnr}{0}
+\newcounter{basenr} % Zaehlt die letzte Ziffer der Zimmernummer
+\setcounter{basenr}{0}
+\newcounter{levelnr}
+\setcounter{levelnr}{-1}
+\newcounter{statementcounter}  %fortlaufende nummer
+\setcounter{statementcounter}{0}
+\newcounter{basementcounter}
+\setcounter{basementcounter}{702}  % sollte da anfangen wo die normalen statements aufhoren
+\newcounter{basementfirstlevelcounter}
+\setcounter{basementfirstlevelcounter}{0}
+\newcounter{currentstatenumber}
+\newcounter{currentleveltiefe}
+\setcounter{currentleveltiefe}{0}
+\newcounter{currentroomnr}
+\setcounter{currentroomnr}{0}
+
+%\numberwithin{equation}{currentroomnr}
+\newcounter{roomequation}
+\makeatletter
+\@addtoreset{equation}{roomequation}
+\makeatother
+%\numberwithin{equation}{subsection}
+\renewcommand{\theequation}{\getroomnr{\roomname}.\arabic{equation}}
+%(end)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% Setter %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+
+%% "private" werden nur intern verwend
+
+% Argument: counter der statement-nummer enthalet
+\newcommand{\setcurrentbeweiszweig}[1]{\xsetcurrentbeweiszweig{\csname \aalph{#1}bz\endcsname}}
+\newcommand{\xsetcurrentbeweiszweig}[1]{\edef\currentbeweiszweig{#1}}
+
+\newcommand{\setstatebeweiszweig}[2][0]{%
+\ifthenelse{\equal{\currentbeweiszweig}{}}
+{\expandafter\xdef\csname \aalph{#2}bz\endcsname{\aalph{#2}}}
+{\expandafter\xdef\csname \aalph{#2}bz\endcsname{\currentbeweiszweig/\aalph{#2}}}
+}
+
+\newcommand{\setaltstatebeweiszweig}[2]{%
+\ifthenelse{\equal{\currentbeweiszweig}{}}
+{\expandafter\xdef\csname \aalph{#1}bz\endcsname{\csname \aalph{#1}bz\endcsname;\aalph{#2}}}
+{\expandafter\xdef\csname \aalph{#1}bz\endcsname{\csname \aalph{#1}bz\endcsname;\currentbeweiszweig/\aalph{#2}}}
+}
+
+
+
+\newcommand{\setroomtitle}[2]{\expandafter\xdef\csname #1roomtitle\endcsname{#2}}
+
+% Setzt das Prefix fuer alle Raeum die im folgenden Definiert werden
+%\newcommand{\setcurrentroomnrprefix}[1]{\xsetcurrentroomnr{\csname \aalph{#1}rnr\endcsname}}
+\newcommand{\setcurrentroomnrprefix}[1]{\xsetcurrentroomnr{\csname #1rnr\endcsname}}
+\newcommand{\xsetcurrentroomnr}[1]{\edef\currentroomnrprefix{#1}}
+
+% Setzt die Roomnr, in dem das aktuelle Prefix vorangestellt wird
+% Argument ist label des statements
+\newcommand{\setstateroomnr}[2][0]{%
+%\expandafter\xdef\csname \statealph{#2}roomdigit\endcsname{\theroomnr}
+\ifthenelse{\equal{\currentroomnrprefix}{}}
+{\expandafter\xdef\csname #2rnr\endcsname{\theroomnr}}   
+{\expandafter\xdef\csname #2rnr\endcsname{\currentroomnrprefix\theroomnr}}
+\setroomdigit{\statealph{#2}}
+}
+\newcommand{\setroomdigit}[1]{%
+{\expandafter\xdef\csname #1roomdigit\endcsname{\theroomnr}}
+}
+\newcommand{\setspecialroomdigit}[2]{%
+{\expandafter\xdef\csname #1roomdigit\endcsname{#2}}
+}
+% Vor allem fuer die Kellerstatements, die fuer die erste Ziffer eine negative Zahl setzen
+\newcommand{\setspecialroomnr}[2]{\expandafter\xdef\csname #1rnr\endcsname{#2}}
+
+\newcommand{\setstateleveltiefe}[1]{\newcounter{#1tiefe}
+	\setcounter{#1tiefe}{\thecurrentleveltiefe}
+	\stepcounter{#1tiefe}}
+
+\newcommand{\setcontent}[2]{\expandafter\gdef\csname \statealph{#2}content\endcsname{#1}\relax}
+%(end)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Hilfsfuntionen %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+\newcommand{\aalph}[1]{\alphalph{\value{#1}}} 
+\newcommand{\roomname}{}
+\newcommand{\roomsep}{}         % Trennzeichen fuer Raumziffern
+\newcommand{\beweiszweigsep}{.} % Trennzeichen fuer Raumbuchstabeen
+\newcommand{\altsep}{/}         % Trennzeichen wenn ein Statement unterschiedliche Raumnummern hat
+
+\edef\currentbeweiszweig{}
+\edef\currentroomnrprefix{}
+
+
+\def\statetree{%   % Der Baum fuer den Roomtree
+\DTsetlength{0.2em}{1em}{0pt}{0.4pt}{0pt}{0.5}{1pt}{0pt}
+\noargotree
+\DTsetdefault%
+}%
+
+\newcommand{\makealphtolink}[1]{\hyperref[#1]{#1}}%\hyperlink{level#1}{#1}}%}
+\newcommand{\linkify}[1]{\expandafter\expandafter\expandafter\xgetI#1/0}
+
+\def\xgetI#1/#2{\ifthenelse{\equal{#2}{0}}{\makealphtolink{#1}}{\makealphtolink{#1}\beweiszweigsep\xgetI#2}}
+
+
+
+\newcommand{\roomify}[1]{\expandafter\expandafter\expandafter\xgetR#1/0}
+%\newcommand{\roomify}[1]{\expandafter\expandafter\expandafter\xgetAlt#1;0} Mit allen Referenzen
+
+\def\xgetAlt#1;#2{\ifthenelse{\equal{#2}{0}}{\expandafter\expandafter\expandafter\xgetR#1/0}{\expandafter\expandafter\expandafter\xgetR#1/0\altsep\xgetAlt#2}}
+
+\def\xgetR#1/#2{\ifthenelse{\equal{#2}{0}}{\makealphtoroomlink{#1}}{\makealphtoroomlink{#1}\roomsep\xgetR#2}}
+
+%\def\xgetBacknr#1;#2{\ifthenelse{\equal{#2}{0}}{\getroomnr{#1}}{\getroomnr{#1}, \xgetBacknr#2}}
+\def\xgetBacknr#1;#2{\ifthenelse{\equal{#2}{0}}{\onlyroomzweig{#1}}{\onlyroomzweig{#1}, \xgetBacknr#2}}
+
+
+
+\DeclareRobustCommand{\roomheadline}{\texorpdfstring{\roomify{\currentbeweiszweig}}{\currentbeweiszweig}}
+\DeclareRobustCommand{\levelheadline}{\texorpdfstring{\linkify{\currentbeweiszweig}}{\currentbeweiszweig}}
+
+% Argument: Label
+\newcommand{\beweiszweig}[1]{\expandafter\linkify\csname\aalph{#1number}bz\endcsname}
+%\newcommand{\titlenolink}[1]{\csname #1roomtitle\endcsname}
+\newcommand{\roomtitle}[1]{{\protect\roomlink{#1}{\csname #1roomtitle\endcsname}}}
+\newcommand{\onlyroomzweig}[1]{\expandafter\roomify\csname\aalph{#1number}bz\endcsname} % Ohne Backreferenzen
+\newcommand{\roomzweig}[1]{\expandafter\roomify\csname\aalph{#1number}bz\endcsname \backrefrooms{#1}}
+\newcommand{\getroomnr}[1]{\csname #1rnr\endcsname}
+\newcommand{\getroomdigitbyid}[1]{\csname #1roomdigit\endcsname}
+
+
+%%% Input: Label-Name
+\newcommand{\stateitlink}[2]{\statelink{#1}{\textit{#2}}}
+\newcommand{\statecontent}[1]{\csname \statealph{#1}content\endcsname}
+\newcommand{\statealph}[1]{\aalph{#1number}}
+\newcommand{\statenumber}[1]{\value{#1number}}
+\newcommand{\statecite}[1]{\csname \statealph{#1}cite\endcsname}
+\newcommand{\labeltoalph}[1]{\aalph{#1number}}
+\newcommand{\stateleveltiefe}[1]{\value{#1tiefe}} 
+
+%\newcommand{\statementtarget}[1]{\hypertarget{#1state}{}}
+
+
+
+%%% Die Versionen ueber LAbel statt Counter realisiert
+%\newcommand{\statenumber}[1]{\getrefnumber{#1}}
+%\newcommand{\labeltoalph}[1]{\setcounter{tempcnt}{\getrefnumber{#1}}\aalph{tempcnt}}
+
+%%% Input: State-Buchstabe + content
+\newcommand{\getcontent}[1]{\csname #1\endcsname}
+% Der Statetiefencounter heißt genauso wie der Name des States
+%(end)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% Referenzieren %%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+% Wenn in Definitionen aus Statements verwiesen wird, die erst sp\ter definiert werden, muss zur Zeit die Buchstabenkombination per Hand gesetzt werden
+
+\newcommand{\firstuse}[1]{\nurrand{\firstusetarget{#1}\pagerefroom{#1}}}  % Setzt das Target und eine Referenz am Rand
+\newcommand{\firstusenextline}[1]{\nurrand{\\\firstusetarget{#1}\pagerefroom{#1}}}
+\newcommand{\firstuseref}[1]{\refroom{#1}\firstuse{#1}} % fuer eine Referenz im Text zusaetzlich zur Randnotz
+\newcommand{\firstuserefnextline}[1]{\refroom{#1}\firstusenextline{#1}}
+\newcommand{\useref}[1]{\state{#1}\marginuseref{#1}}
+\newcommand{\userefnextline}[1]{\state{#1}\marginusereftwo{#1}}
+\newcommand{\marginuseref}[1]{\nurrand{\pagerefroom{#1}}}
+\newcommand{\marginusereftwo}[1]{\nurrand{\\\pagerefroom{#1}}}
+
+\newcommand{\refroomnr}[1]{\protect\roomlink{#1}{\getroomnr{#1}}}   % veraltet, das gleiche wie refroom
+\newcommand{\refroom}[1]{\protect\roomlink{#1}{\getroomnr{#1}}}
+\newcommand{\reffirstuse}[1]{\protect\firstuselink{#1}{\getroomnr{#1}}}
+\newcommand{\refroot}[1]{\protect\treerootlink{#1}{\getroomnr{#1}}}
+\newcommand{\refchild}[1]{\protect\treechildlink{#1}{\getroomnr{#1}}}
+\newcommand{\refproof}[1]{\protect\prooflink{#1}{\getroomnr{#1}}}
+\newcommand{\reflevel}[1]{\protect\levellink{#1}{\getroomnr{#1}}}
+
+\newcommand{\state}[2][]{\ifx\\#1\\\protect\refroomnr{#2}\else\protect\refroomnr{#2} #1\fi} % das gleiche wie refroom
+
+%\newcommand{\manualref}[2]{\roomlink{#1}{#2}}
+
+
+\newcommand{\backrefrooms}[1]{\ifcsname #1backrefs\endcsname ~(\expandafter\expandafter\expandafter\xgetBacknr\csname #1backrefs\endcsname;0)\else\fi}
+
+%\newcommand{\stateitem}[1]{\item[\buthere{#1}] \statecontent{#1}} % Ersatz fuer \item
+\newcommand{\stateitemnc}[1]{\item[\state{#1}]\firstuse{#1}} % ohne automtisch Conetent hinzuschreiben
+\newcommand{\randstate}[1]{\nurrand{\state{#1}}}
+\newcommand{\randrefstate}[1]{\nurrand{\refstate{#1}}}
+\newcommand{\randproofstate}[1]{\marginnote{\proofstate{#1}}[5.2mm]}
+
+\newcommand{\randref}[1]{\randpagerefroom{#1}}
+\newcommand{\randpagerefroom}[1]{\nurrand{\pagerefroom{#1}}}
+
+\newcommand{\countertostate}[1]{(\aalph{#1})}
+
+
+%%%%  Veraltet
+% \newcommand{\anchoritemcontent}[1]{\item[\firstuseref{#1}] \statecontent{#1}} % Ersatz fuer \item
+% \newcommand{\anchoritem}[1]{\item[\firstuseref{#1}]} % ohne automtisch Conetent hinzuschreiben
+% \newcommand{\anchorref}[1]{\nurrand{\firstuseref{#1}}\state{#1}}
+\newcommand{\proofstate}[1]{[\protect\refstate{#1}]} 
+ %{\labeltoalph{#1}}}
+\newcommand{\refstate}[1]{\protect\roomlink{#1}{\getroomnr{#1}}}
+\newcommand{\unprotectref}[1]{\protect\roomlink{#1}{Test}} % Braucht man fuer Verweise in entry-definitionen
+\newcommand{\staterand}[1]{\nurrand{\state{#1}}}
+\newcommand{\refstaterand}[1]{\nurrand{\refstate{#1}}}
+\newcommand{\proofstaterand}[1]{\nurrand{\proofstate{#1}}}
+
+
+%(end)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% Define room structure %%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% (fold)
+
+\newenvironment{newstructure}[1]{%
+\freshstart
+   \setroomstuff{#1}
+   \prepareforchildren{#1}
+   \edef\currentlabel{#1}
+}{ 
+\setcounter{roomnr}{\getroomdigitbyid{\aalph{currentstatenumber}}}
+}
+
+
+\newcommand{\newstate}[2]{%
+   \setroomstuff{#1}
+   \expandafter\xdef\csname #1parent\endcsname{\currentlabel} % save 
+       \xdef\currentlabel{#1}
+   #2  % handle substatement
+   \xdef\currentlabel{\csname \currentlabel parent\endcsname}      \setcounter{roomnr}{\getroomdigitbyid{\aalph{currentstatenumber}}}
+  \prepareforchildren{\currentlabel}  % initialization for the definition of substatements  
+}
+
+\makeatletter
+\newcommand{\newcitestate}[1]{%  Hat keine Kinder, deshalb dieses ganze Elterngedoens nicht notwendig
+  \setroomstuff{#1}   
+}
+
+\newcommand{\newrefstate}[1]{%
+  \ifcsname #1backrefs\endcsname
+  \expandafter\xdef\csname #1backrefs\endcsname{\csname #1backrefs\endcsname;\currentlabel}%
+  \else
+  \expandafter\xdef\csname #1backrefs\endcsname{\currentlabel}
+  \fi
+}
+
+\newcommand{\newcorollarystate}[2]{\newstate{#1}{#2}}
+
+\makeatother
+
+
+\newcommand{\prepareforchildren}[1]{%
+	\setcounter{currentstatenumber}{\statenumber{#1}}
+	\setcounter{currentleveltiefe}{\stateleveltiefe{#1}}
+	\setcurrentbeweiszweig{currentstatenumber}
+	\setcurrentroomnrprefix{#1}
+}
+
+\newcommand{\freshstart}{%
+   \setcounter{currentstatenumber}{0}
+	\setcounter{currentleveltiefe}{0}
+   \setcounter{roomnr}{0}
+   \edef\currentbeweiszweig{}
+   \edef\currentroomnrprefix{}
+}
+
+\newcommand{\setroomstuff}[1]{%
+   \refstepcounter{statementcounter}
+   \stepcounter{roomnr}
+   %
+   \newcounter{#1number}%
+   \setcounter{#1number}{\value{statementcounter}}%
+   \expandafter\xdef\csname\aalph{#1number}alphtolabel\endcsname{#1}
+   %
+   \setstateroomnr{#1}    
+   \setstateleveltiefe{#1}
+   \setstatebeweiszweig{statementcounter}   % Erstellt die Folgen von Buchstaben 
+                   % Ordnet dem Buchstaben die entsprechende Zahl roomnr zu
+  \prepareforchildren{#1}  % initialization for the definition of substatements
+  \setcounter{roomnr}{0}
+}
+%(end)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% Tree typesetting %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+
+
+\newcommand{\treerootbox}[1]{%
+	\treeroot{%
+    \begin{minipage}{\linewidth}%
+        \begin{recallnr}{#1}%
+          %\getampel{#1}%
+          \getcontent{\labeltoalph{#1}content}%
+        \end{recallnr}
+        \end{minipage}%
+    }
+}
+
+\newcommand{\roomtree}[1]{% % Argument: Content for Tree
+	\treeroottarget{\roomname}\relax%
+  \newtree
+  \treerootbox{\roomname}
+	#1\relax%
+	\statetree%
+  \afterroomtree%
+}
+
+\newcommand{\subroom}[1]{\roomchild{#1}}
+
+\newcommand{\roomchild}[2][reliesonnr]{%
+	   \treechildtarget{#2}
+     \treebox[#1]{#2}
+}
+
+% Treebox nur mit Buchstaben des Statments
+\newcommand{\treebox}[2][reliesonnr]{%
+  \treechild{1}{%
+   \treechildbox[#1]{#2}%
+  }%
+}
+
+\newcommand{\treechildbox}[2][reliesonnr]{%
+   \begin{minipage}{\hsize}%
+      \footnotesize%
+      \begin{#1}{#2}%
+         \getcontent{\labeltoalph{#2}content}%
+      \end{#1}%
+   \end{minipage}%
+}
+
+%(end)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% Room typesetting %%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+\newcommand{\elevator}{%
+\roomsection{In the elevator}
+}
+
+\newcommand{\room}[1]{%
+  \roomsectionfor{#1} 
+  \setroom{#1}%
+}
+
+
+\newcommand{\setroom}[1]{
+	\setcounter{roomnr}{0}
+  \renewcommand{\roomname}{#1}
+  \prepareforchildren{#1}
+	%\uses{#2}{#3}  % <----- #TODO
+  \roomtarget{#1}
+  \edef\thecurrentroomnr{\csname #1rnr\endcsname}
+  \stepcounter{roomequation}
+}
+
+
+\newcommand{\roomsection}[2][]{
+\ifx\\#1\\
+\roomlevel*{#2\sectionmark{\sffamily #2}}\addcontentsline{toc}{\roomtoclevel}{#2}
+\else
+\roomlevel*{#2\sectionmark{\sffamily #2}}\addcontentsline{toc}{\roomtoclevel}{#1}
+\fi
+}
+
+\newcommand{\roomsectionfor}[1]{%
+\roomsection{\texorpdfstring{\getroomnr{#1} \roomtitle{#1}}{\getroomnr{#1} \csname #1roomtitle\endcsname}}
+}
+%(end)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Define room content %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+\newcommand{\defstate}[4][\emptycite]{%
+   \setroomtitle{#2}{#3}
+   \expandafter\gdef\csname \statealph{#2}cite\endcsname{ #1}\relax%
+   \setcontent{#4}{#2}
+}
+
+%(end)
+
+
+% Alter Linkkram
+
+
+
+% Links. Als Argument immer das Label !!!
+%\newcommand{\statelink}[2]{\hyperlink{#1state}{#2}}
+\newcommand{\levellink}[2]{\hyperlink{#1level}{#2}}
+\newcommand{\prooflink}[2]{\hyperlink{#1proof}{#2}}   % Link zum Beweis eines Raumes
+\newcommand{\firstuselink}[2]{\hyperlink{#1firstuse}{#2}} % Link zur ersten Verwendung eines Raumes in einem Beweis
+\newcommand{\treechildlink}[2]{\hyperlink{#1treechild}{#2}}
+\newcommand{\treerootlink}[2]{\hyperlink{#1treeroot}{#2}}
+\newcommand{\entrylink}[2]{\hyperlink{gls\csname uml#1\endcsname x#1}{#2}}  % Link zu einer Definition
+\newcommand{\mathentrylink}[2]{\entrylink{#1}{\ensuremath{#2}}}
+
+\newcommand{\makealphtoroomlink}[1]{\hyperlink{#1room}{\getroomdigitbyid{#1}}}
+\newcommand{\citepdf}[2][]{\cite[#1]{#2}}
+\newcommand{\doublecitepdf}[3][]{\cite[#1]{#2,#3}}
+\newcommand{\pagerefroom}[1]{\refroom{#1}$\rightarrow$p.\pageref{#1}}
+
+\newcommand{\nurrand}[1]{%
+  \checkoddpage%
+        \ifoddpage%
+        	\leavevmode\marginpar{#1}%
+        \else%
+					\leavevmode\marginpar{#1}%
+%					\leavevmode\marginpar{\hfill #1}%
+        	%\RaggedLeft%
+        \fi} 
+\newcommand*{\mathview}{%
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[LE,RO]{}
+\fancyhead[LO,RE]{}
+\fancyfoot[CO,CE]{\scshape\thepage}
+
+    \renewcommand{\citepdf}[2][]{[\href{\#refview:bib/##2}{\protect\NoHyper\citealp[{##1}]{##2}\protect\endNoHyper}]}
+	%\cite{##1}[\href{\#subview:bib/##1}{\ref{##1}}]}
+	\renewcommand{\entrylink}[2]{\href{\#def:##1}{##2}}
+	\renewcommand{\roomlink}[2]{\href{\#subview:##1}{##2}}
+	\renewcommand{\levellink}[2]{\href{\#subview:##1level}{##2}}
+	\renewcommand{\prooflink}[2]{\href{\#subview:##1proof}{##2}}   % Link zum Beweis eines Raumes
+	%\newcommand{\roomlink}[2]{\href{\#subview:##1treeroom}{#2}}  % Link zum Begin eines neuen Raumabschnitts
+	\renewcommand{\firstuselink}[2]{\href{\#subview:##1firstuse}{##2}} % Link zur ersten Verwendung eines Raumes in einem Beweis
+	\renewcommand{\treechildlink}[2]{\href{\#subview:##1treechild}{##2}}
+	\renewcommand{\treerootlink}[2]{\href{\#subview:##1treeroot}{##2}}
+	
+	\renewcommand{\makealphtoroomlink}[1]{\href{\#subview:\csname##1alphtolabel\endcsname}{\getroomdigitbyid{##1}}}
+	\renewcommand{\pagerefroom}[1]{$\rightarrow$\refroom{##1}}
+	\renewcommand{\nurrand}[1]{\marginpar[left text]{##1}}
+	\setlength{\paperheight}{265mm}
+	\setlength{\paperwidth}{164mm}
+	\setlength{\marginparwidth}{0mm}
+	\setlength{\hoffset}{-23mm}
+	\setlength{\footskip}{40pt}
+	\setlength{\evensidemargin}{5mm}
+	\setlength{\oddsidemargin}{5mm}
+	\setlength{\textwidth}{150mm}        
+	\setlength{\voffset}{-27mm}
+	\setlength{\textheight}{225mm}
+  
+  
+%   \addtolength{\oddsidemargin}{-.375in}
+%   \addtolength{\evensidemargin}{-.375in}
+% %  \addtolength{\oddsidemargin}{-3in}
+% %  \addtolength{\evensidemargin}{-3in}
+%   \addtolength{\textwidth}{0.75in}
+%	\addtolength{\topmargin}{-.875in}
+%	\addtolength{\textheight}{.875in}
+}
+\newcommand*{\defview}{%
+% \fancyhead{}
+% \fancyfoot{}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[LE,RO]{}
+\fancyhead[LO,RE]{}
+\fancyfoot[CO,CE]{}
+		\renewcommand{\citepdf}[2][]{[\href{\#refview:bib/##2}{\protect\NoHyper\citealp[##1]{##2}\protect\endNoHyper}]}
+		\renewcommand{\doublecitepdf}[3][]{[\href{\#refview:bib/##2}{\protect\NoHyper\citealp[##1]{##2}\protect\endNoHyper},\href{\#refview:bib/##3}{\protect\NoHyper\citealp[##1]{##3}\protect\endNoHyper}]}
+	 %\renewcommand{\citepdf}[1]{[\href{\#subview:bib/##1}{\ref{##1}}]\nocite{##1}}
+	 \renewcommand{\entrylink}[2]{\href{\#def:##1}{##2}}
+	 \renewcommand{\mathentrylink}[2]{\href{\#def:##1}{\ensuremath{##2}}}
+	 \renewcommand{\roomlink}[2]{\href{\#subview:##1}{##2}}
+ 	\renewcommand{\levellink}[2]{\href{\#subview:##1level}{##2}}
+ 	\renewcommand{\prooflink}[2]{\href{\#subview:##1proof}{##2}}   % Link zum Beweis eines Raumes
+ 	%\newcommand{\roomlink}[2]{\href{\#subview:##1treeroom}{#2}}  % Link zum Begin eines neuen Raumabschnitts
+ 	\renewcommand{\firstuselink}[2]{\href{\#subview:##1firstuse}{##2}} % Link zur ersten Verwendung eines Raumes in einem Beweis
+ 	\renewcommand{\treechildlink}[2]{\href{\#subview:##1treechild}{##2}}
+ 	\renewcommand{\treerootlink}[2]{\href{\#subview:##1treeroot}{##2}}
+	
+	 \renewcommand{\makealphtoroomlink}[1]{\href{\#subview:##1}{\getroomdigitbyid{##1}}}
+   \geometry{width=20cm,height=5cm, top=0cm, paperwidth=18cm, paperheight=20cm}
+	 \renewcommand{\nurrand}[1]{\marginpar[left text]{##1}}
+}
+
+\newcommand{\noampel}{
+\renewcommand{\getampel}[1]{}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% Environments %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+%(end)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Theorem-Styles %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+
+% Einfach \statement aufrufen geht nicht, weil dann immer ein Buchstabe übersprungen wird
+\newtheoremstyle{Statestyle}% name of the style to be used
+{3pt}% measure of space to leave above the theorem. E.g.: 3pt
+{3pt}% measure of space to leave below the theorem. E.g.: 3pt
+{\itshape}% %e.g \slshape name of font to use in the body of the theorem
+{0pt}% measure of space to indent
+{\bfseries}% name of head font
+{}% punctuation between head and body
+{ }% space after theorem head; " " = normal interword space
+{%
+{#1~\firstuseref{#3}.}%\reflevel{#3}%(\aalph{statementcounter})%
+}%% Manually specify head
+
+
+ 
+\newcommand{\newstatetheorem}[2]{  % Name und Text der Umgebung
+\theoremstyle{Statestyle}
+\newtheorem*{#1ohnerand}{#2}
+%%%% Fassung ohne Inhalt der Umgebung in Befehl zu kapsel, soll angeblich schneller sein
+%\newenvironment{#1}[2][]{%
+%\statement{##1}
+% \begin{#1ohnerand}[##1]%
+% }
+% {\end{#1ohnerand}}
+%
+%%%% Ende alte Fassung
+\NewEnviron{#1}[2][]{%
+\envstatement{##1}{}%
+%%%% Der Befehl muss global definiert werden und voll expandiert werden
+%%%% Das expandieren funktioniert nicht, wenn die Umgebungen einen komplexeren Inhalt hat
+%%%% Mit \def ist es ok
+\expandafter\setcontent\expandafter{\BODY}{##1}
+%\expandafter\expandafter\gdef\csname \aalph{statementcounter}content\endcsname{\BODY}\relax%
+%\setstateroomnr{##1}
+\begin{#1ohnerand}[##1]\BODY\end{#1ohnerand}}
+%\expandafter\newcommand\csname ##1cite\endcsname{\ifx\\##2\\\else[##2]\fi}
+}
+
+
+\newenvironment{MyColorBox}[1][backgroundcolor=CommentGray]{%
+\begin{recallframe}[fontcolor=black,innerleftmargin=1ex, #1]%
+{\setlength{\hsize}{\textwidth-2\fboxsep-2\fboxrule}}}%
+{\end{recallframe}}
+
+
+
+\newcommand{\comparedef}[1]{\global\def\citecompare{ #1}}
+\comparedef{\emptycite}
+\newcommand{\emptycite}{}%{\!\!}
+% Wird bentutzt um in einem Baum ein Statement einzubauen, das woander defineirt ist
+% Zeigt den vollen Beweiszweig an
+% \newtheoremstyle{FullrefRecallStatestyle}% name of the style to be used
+
+
+\newtheoremstyle{RecallStyle}% name of the style to be used
+{3pt}% measure of space to leave above the theorem. E.g.: 3pt
+{3pt}% measure of space to leave below the theorem. E.g.: 3pt
+{\itshape}% %e.g \slshape name of font to use in the body of the theorem
+{0pt}% measure of space to indent
+{\bfseries}% name of head font
+{}% punctuation between head and body
+{ }% space after theorem head; " " = normal interword space
+{\def\arg{#3}#1  %\arg kapselt den Labelnamen, damit wird in den Theoremdefinition der Header zurecht gebastelt..
+%\csname #3recallcite\endcsname
+}%% Manually specify head
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% Original
+\newcommand{\newrecall}[3][backgroundcolor=CommentGray]{% Name und Text der Umgebung
+%\theoremstyle{GeneralRecallStatestyle}%
+\newtheorem*{#2generalrecall}{#3}%
+\newenvironment{#2}[2][]{%
+\begin{MyColorBox}[#1]\begin{#2generalrecall}[##2]}%
+{\end{#2generalrecall}\end{MyColorBox}}%
+}
+
+\newtheoremstyle{Proofstatestyle}% name of the style to be used
+{3pt}% measure of space to leave above the theorem. E.g.: 3pt
+{3pt}% measure of space to leave below the theorem. E.g.: 3pt
+{\itshape}% %e.g \slshape name of font to use in the body of the theorem
+{0pt}% measure of space to indent
+{\bfseries}% name of head font
+{}% punctuation between head and body
+{ }% space after theorem head; " " = normal interword space
+{#1 \countertostate{proofstatecounter}
+\normalfont\ifthenelse{\equal{#3}{0}}{}{(#3)}.} % Manually specify head
+
+
+%%% Weil ich ams-theorem keinen zweiten Parameter (zusaetzlich zur Referenzangabe) mitgeben kann,
+%%% diese Hilfskonstruktion. Außerdem kann man keinen Randeintrag direkt in der theoremstyle-definition machen
+%%% Nachteil: Bei der Umgebung kommt nur noch der Wert des Statementcounter an, aber nicht der Name. Was eventuelle Weiterverarbeitung schwierig macht. 
+\newcounter{proofstatecounter}
+\setcounter{proofstatecounter}{0}
+
+
+\newenvironment{proofstatethm}[2][0]{%
+\setcounter{proofstatecounter}{\value{#2counter}-1}%
+\begin{amsproofstatethm}[{#1}]\proofstaterand{#2}\hypertarget{#2proof}%%
+}{\end{amsproofstatethm}}
+\newenvironment{proofstateprop}[2][0]{%
+\setcounter{proofstatecounter}{\value{#2counter}-1}%
+\begin{amsproofstateprop}[{#1}]\proofstaterand{#2} \hypertarget{#2proof}%%
+}{\end{amsproofstateprop}}
+
+\newenvironment{proofstatelemma}[2][0]{%
+\setcounter{proofstatecounter}{\value{#2counter}-1}%
+%
+\begin{amsproofstatelemma}[{#1}]\proofstaterand{#2} \hypertarget{#2proof}%%
+}{\end{amsproofstatelemma}}
+%\sffamily\bfseries{}
+
+%(end)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Statement-Umgebungen %%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+\definecolor{CommentGray}{rgb}{0.96,0.97,0.98}
+\newmdenv[]{recallframe}
+
+%%%% Umgebungen, die neues Statement anlegen
+\theoremstyle{Statestyle}
+\newstatetheorem{maintheorem}{Theorem}
+\newstatetheorem{statethm}{Theorem} 
+\newstatetheorem{stateprop}{Proposition}    
+\newstatetheorem{statelemma}{Lemma}
+\newstatetheorem{openq}{OQ}
+
+%%% Umgebungen, die Statement wiederholen
+% \theoremstyle{RecallStatestyle}
+% \newrecallstatetheorem{recall}{}
+% 
+% \theoremstyle{FullrefRecallStatestyle}
+% \newfullrefrecallstatetheorem{refrecall}{}
+% 
+% \theoremstyle{CiteRecallStatestyle}
+% \newciterecallstatetheorem{citerecall}{}
+
+\theoremstyle{RecallStyle}
+\newrecall{relieson}{\roomzweig{\arg}%
+   {~\roomtitle{\arg}~\statecite{\arg}}~%
+      \expandafter\ifx\csname\statealph{\arg}cite\endcsname\citecompare\else\\\fi}
+
+\newrecall{recall}{\roomzweig{\arg}%
+   {~\roomtitle{\arg}~\statecite{\arg}}%
+   \expandafter\ifx\csname\statealph{\arg}cite\endcsname\citecompare\\\else\\\fi}
+   
+\newrecall{refrecall}{\beweiszweig{\arg}
+\statecite{\arg}\roomtitle{\arg}}
+%\newrecall{refmodrecall}
+% alt: \refstate statt refroomnr
+\newrecall[backgroundcolor=white]{citerecall}{[\roomzweig{\arg} $\rightarrow$ \statecite{\arg}]% 
+   \expandafter\ifx\csname\statealph{\arg}cite\endcsname\citecompare\else~\roomtitle{\arg}\\\fi}  % Zeilenumbruch, wenn eine Quelle angegeben ist
+
+% Mit Zahlen statt mit Buchsdtaben Nummererien
+\newrecall{recallnr}{\roomzweig{\arg}%
+   {~\roomtitle{\arg}
+   \statecite{\arg}\\}%
+   %\expandafter\ifx\csname\statealph{\arg}cite\endcsname\citecompare\else\\\fi
+}
+
+\newrecall{bsprecallnr}{\getroomnr{\arg}%\roomzweig{\arg}%
+   {~\roomtitle{\arg}
+   \statecite{\arg}}%
+   %\expandafter\ifx\csname\statealph{\arg}cite\endcsname\citecompare\else\\\fi
+}
+
+\newrecall{reliesonnr}{\roomzweig{\arg}%
+   {~\roomtitle{\arg}~\statecite{\arg}}%
+      %\expandafter\ifx\csname\statealph{\arg}cite\endcsname\citecompare\else\\\fi
+}
+
+\newrecall[bottomline=false,backgroundcolor=CommentGray]{reliesonnrtop}{\roomzweig{\arg}%
+   {~\roomtitle{\arg}~
+   \statecite{\arg}\\}%
+}
+
+\newrecall[topline=false,backgroundcolor=CommentGray]{reliesonnrbottom}{\roomzweig{\arg} (cont.)\\}
+      
+      
+\newrecall{reliesonshort}{%
+  \pagerefroom{\arg}{~\roomtitle{\arg}\statecite{\arg}}%
+}
+
+
+\newrecall{refrecallnr}
+   {\roomzweig{\arg}~\roomtitle{\arg} \statecite{\arg}\\}
+
+\newrecall[bottomline=false]{refrecallnrtop}
+   {\roomzweig{\arg}~\roomtitle{\arg} \statecite{\arg}\\}
+   
+\newrecall[topline=false]{refrecallnrbottom}
+   {\roomzweig{\arg}~\roomtitle{\arg} \statecite{\arg}\\}   
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% Veraltet %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%(fold)
+% Refbox with additional text
+\newcommand{\refdetbox}[2]{%
+
+	\setlength{\mylength}{(\value{#1tiefe}cm-1cm)/2}
+	\hspace{\mylength}
+	\begin{minipage}{\linewidth-\mylength+3cm}
+		\begin{recall}{#1}
+			\getcontent{\labeltoalph{#1}content}
+		\end{recall}
+		#2
+	\end{minipage}\\
+}
+
+\newlength{\mylength}
+\newcommand{\refbox}[1]{%
+	\setlength{\mylength}{(\value{#1tiefe}cm-1cm)/2}
+	\hspace{\mylength}
+	\begin{minipage}{\linewidth-\mylength+3cm}
+		\begin{recall}{#1}
+			\getcontent{\labeltoalph{#1}content}
+		\end{recall}
+	\end{minipage}\\
+}
+
+
+\newcommand{\roomservice}{\section*{Definitions}}
+
+\newcommand{\refdef}[2]{\hyperlink{def#1}{#2}}
+
+%\itshape\hyperlink{#1}{\alph{#1counter}}\relax
+
+\newenvironment{supplydef}[3][]{\begin{defn}[#1]\label{def#2}\nurrand{#3}\hypertarget{tar#2}}{\end{defn}}
+\newenvironment{rdef}[3][]{\begin{defn}[#1]\nurrand{#3}\hypertarget{#2}}{\end{defn}}
+
+\newcommand{\gd}[1]{\gls{#1}}
+
+\newcommand{\defglossary}[1]{\hypertarget{#1}}
+
+% allinon {eltern}{current}
+\newcommand{\allinone}[2][]{%
+	\level[#2]{Hallo}
+	%\hypertarget{level#2}{}\relax\section*{Level {\normalfont\protect{\csname #2eltern\endcsname}}.\normalfont\protect\refstate{#2}}\proofstaterand{#2}}}
+	\begin{recall}{#2}
+		\csname #2content\endcsname
+	\end{recall}
+}
+
+
+\pagestyle{fancy}
+%(end)
+
+%(end)
+

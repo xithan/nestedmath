@@ -1,0 +1,657 @@
+\NeedsTeXFormat{LaTeX2e}
+%%%
+%%% definitions.sty
+%%%
+%%% Ver 0.1 definitions.sty written by Philipp Kuehl <2014/05/04>
+
+\ProvidesPackage{definitions}[2014/05/04 Package for organizing definitions]
+\typeout{`definitions.sty' package v0.1 for organizing definitions.}
+
+\RequirePackage{packages/tree}
+%\RequirePackage{acronym}
+\RequirePackage{environ}
+%\RequirePackage{etoolbox}
+%\RequirePackage{mdframed}
+
+\let\CoCite\cite
+
+\RequirePackage{etex} % We run out of dimension registers. This fixes it.
+\RequirePackage{etoolbox}
+%\RequirePackage{cite}
+
+%\RequirePackage{multicol}
+%\RequirePackage{marginnote} % Für randbemerkung in Theoremumgebungen http://tex.stackexchange.com/questions/23327/how-to-patch-a-floating-environment-so-that-the-patched-command-floats
+%\RequirePackage{changepage} %  Für die Ausrichtung der Randeinträge
+
+\RequirePackage[notcomma,notperiod,notquote,notquery,notexcl,notcolon,notscolon]{hanging}
+\RequirePackage{calc}
+\RequirePackage{ifthen}
+\RequirePackage{color}
+\RequirePackage{ifpdf}
+
+%\RequirePackage{framed}
+\RequirePackage{refcount} % Aus Label counterfähige Zahlen machen
+%\RequirePackage{alphalph} % Doppelbuchstabennumerierung
+\RequirePackage{varwidth}
+\RequirePackage{xspace} % space am Ende von Befehlen
+%\RequirePackage{enumitem}
+
+\RequirePackage{mdframed}
+
+
+
+\edef\currentletter{}  % Achtung: heftige Nebeneffekte. Der Inhalt von currentletter wird in allen newentry definitionen verwendet. 
+ 
+\makeatletter
+\newcommand{\target}[1]{\Hy@raisedlink{\hypertarget{#1}{}}}
+\makeatother
+
+\newcommand{\dist}{\kern0.5cm }
+
+% \newentry[Anzahl Parameter][Optionale Belegung, leer geht nicht. Muss ein Leerzeichen enthalten, wenn der Standard leer sein soll]{Befehlsname}{Ausgabe fuer den Befehl}{Ausgabe im Glossar}{Ausfuerhliche Bezeichnung}{Definition}
+\newcounter{para}
+\setcounter{para}{1}
+
+%  [Anzahl Parameter][Optionaler Paramter]{Makroname}{Makroinhalt}{Bezeichnung im Glossar}{Kurzdefinition}{Name}{Glossar Buchstabe}{Ausfuehrliche Definition}
+
+\def\mydefton#1{\expandafter\newcommand\csname #1ton\endcsname{}}
+\def\tonfor#1{\ifx#1\tonfor\else\mydefton#1\expandafter\tonfor\fi}
+\tonfor ABCDEFGHIJKLMNOPQRSTUVWXYZ\tonfor
+\newcommand{\Symton}{}
+\newcommand{\ZZton}{} % Das was wahrscheinlich nicht aufgefuhert werden soll
+
+
+% Ein extra parameter fuer das Symbol im Table of Notation
+\newcommand{\mymagicentry}[1][0]{\setcounter{para}{#1}\mymagicentryy}
+\newcommand{\mymagicentryeq}[1][0]{\setcounter{para}{#1}\mymagicentryyeq}  
+\newcommand{\mymagicentrymap}[1][0]{\setcounter{para}{#1}\mymagicentryymap}
+\newcommand{\mymagicentryns}[1][0]{\setcounter{para}{#1}\mymagicentryyns}
+\newcommand{\mymagiconlyentry}[1][0]{\setcounter{para}{#1}\mymagiconlyentryy}
+
+\newcommand{\newdef}[1][0]{\setcounter{para}{#1}\magicentryy}
+\newcommand{\newdefeq}[1][0]{\setcounter{para}{#1}\magicentryyeq}  
+\newcommand{\newdefmap}[1][0]{\setcounter{para}{#1}\magicentryymap}
+\newcommand{\newdefns}[1][0]{\setcounter{para}{#1}\magicentryyns}
+% Erstellt den verlinkbaren Eintrag, aber nicht den Verweisbefehl dazu
+\newcommand{\magiconlyentry}[1][0]{\setcounter{para}{#1}\magiconlyentryy}
+
+%  [Anzahl Parameter][Optionaler Paramter]{Makroname}{Makroinhalt}{Bezeichnung im Glossar}{Kurzdefinition}{Name}{Ausfuehrliche Definition}
+\newcommand{\fullentry}[1][0]{\setcounter{para}{#1}\fullentryy}
+\newcommand{\fullentryeq}[1][0]{\setcounter{para}{#1}\fullentryyeq}
+\newcommand{\fullentrymap}[1][0]{\setcounter{para}{#1}\fullentryymap}
+\newcommand{\fullentryns}[1][0]{\setcounter{para}{#1}\fullentryyns}
+
+\newcommand{\newentry}[1][0]{\setcounter{para}{#1}\newentryy}
+\newcommand{\newentryeq}[1][0]{\setcounter{para}{#1}\newentryyeq}
+\newcommand{\newentryns}[1][0]{\setcounter{para}{#1}\newentryyns}
+\newcommand{\newentrymap}[1][0]{\setcounter{para}{#1}\newentryymap}  
+% Erstellt den verlinkbaren Eintrag, aber nicht den Verweisbefehl dazu
+\newcommand{\onlyentry}[1][0]{\setcounter{para}{#1}\onlyentryy}
+
+
+\newcommand{\createmacro}[3]{%
+  \ifx\\#1\\ % empty  also keine optionalen Paramter
+      \expandafter\providecommand\csname#2\endcsname[\value{para}]{\mathentrylink{#2}{#3}}     % Macro mit Link zur  Definition 
+      \expandafter\providecommand\csname r#2\endcsname[\value{para}]{\rand{\mathentrylink{#2}{#3}}} % Macro mit Link am Rand zur Definition
+          \expandafter\providecommand\csname#2link\endcsname[1]{\entrylink{#2}{##1}}
+      
+   \else
+    \expandafter\providecommand\csname#2\endcsname[\value{para}][{#1}]{\mathentrylink{#2}{#3}}
+    \expandafter\providecommand\csname r#2\endcsname[\value{para}][{#1}]{\rand{\mathentrylink{#2}{#3}}}
+  \fi
+}
+
+\newcommand{\curdim}{n}
+\newcommand{\dimnpone}{\renewcommand{\curdim}{n+1}}
+\newcommand{\dimnmone}{\renewcommand{\curdim}{n-1}}
+\newcommand{\setdim}[1]{\renewcommand{\curdim}{#1}}
+\newcounter{textparas}
+
+
+
+\newcommand{\createtextmacros}[5][]{%
+% Anzahl Parameter steht in \value{para}
+% 1 - Quelle und Ziel einer Abbildung
+% 2 - Defaultbelegung fuer optionalen Paramter
+% 3 - Name des Macros
+% 4 - Alternative/original definition des Makros (muss vorher festgestellt werden, welche verwendet wird)
+% 5 - Name des definierten Begriffs
+
+% macro+name = ausfuehrlicher Name fuer Definiton
+% macro+full = name und symbol
+  
+   \ifx\\#2\\ % Kein optionaler Parameter fuer den Bezeichner. Es gibt einen Optionalen Parameter, fuer was nach dem Befehl passieren soll
+      %\setcounter{textparas}{\value{para}}
+      %\stepcounter{textparas}
+      \expandafter\providecommand\csname #3name\endcsname[1][]{\entrylink{#3}{#5}##1\xspace} % nur der Name der Definition, optionaler Parameter fuer Satzzeichen
+      \expandafter\providecommand\csname #3namedim\endcsname[1][n]{\entrylink{#3}{$##1$-dimensional #5}\xspace}
+      \expandafter\providecommand\csname #3full\endcsname[1][]{\entrylink{#3}{#5 \ensuremath{#4}#1}##1\xspace}
+      \expandafter\providecommand\csname #3fulldim\endcsname[1][n]{\entrylink{#3}{$##1$-#5 \ensuremath{#4}#1}\xspace}
+      \expandafter\providecommand\csname #3defaultsym\endcsname{\ensuremath{#4}}
+      \ifx\\#1\\
+      \else  % Es wird eine Abbildung definiert
+         \expandafter\providecommand\csname #3map\endcsname{\entrylink{#3}{\ensuremath{#4}}#1}
+      \fi
+   \else
+      \expandafter\providecommand\csname #3defaultsym\endcsname[1][#2]{\ensuremath{#4}}
+      \expandafter\providecommand\csname #3full\endcsname[\value{para}][{#2}]{\entrylink{#3}{#5 \ensuremath{#4}#1}\xspace} % Name und Bezeichner fuer Definitiion
+      \expandafter\providecommand\csname #3name\endcsname[\value{para}][{#2}]{\entrylink{#3}{#5}\xspace}
+   \fi
+}
+
+
+\newcommand{\mymagicentryyns}[8][]{%
+% Parameter: [Defaultbelegung fuer optionalen Parameter fuer das zu erzeugende Macro]
+%              {Name des Macros} {Inhalt des Macros} {Alternativer Inhalt des Macros Definition}{Glossar Buchstabe} {Ausfuerhliche Bezeichnung} {Definitionstext}
+\fullentryyns[#1]{#2}{#3}{#4}{#5}{#8}
+\addentrytoton{#7}{#6}{#2}
+}
+
+\newcommand{\mymagicentryy}[8][]{%
+% 1 - Defaultbelegung fuer optionalen Parameter
+% 2 - Name fuer Macro
+% 3 - Symbol fuer Macro (fuer Gebrauch im Text)
+% 4 - Alternatives Symbol fuer Glossar
+% 5 - Name des definierten Begriffs
+% 6 - Alternatives Symbol fuer Table of Notation
+% 7 - Buchstabe fuer Table of Notation
+% 8 - Die Definition 
+\fullentryy[#1]{#2}{#3}{#4}{#5}{#8}
+\addmyentrytoton{#7}{#6}{#2}
+}
+
+\newcommand{\mymagicentryyeq}[9][]{%
+% 1 - Defaultbelegung fuer optionalen Parameter
+% 2 - Name fuer Macro
+% 3 - Symbol fuer Macro (fuer Gebrauch im Text)
+% 4 - Alternatives Symbol fuer Glossar
+% 5 - Definition der Gleichung (Anfang im Glossar)
+% 6 - Name des definierten Begriffs
+% 7 - Alternatives Symbol fuer Table of Notation
+% 8 - Buchstabe fuer Table of Notation
+% 9 - Die Definition 
+\fullentryyeq[#1]{#2}{#3}{#4}{#5}{#6}{#9}
+\addmyentrytoton{#8}{#7}{#2}
+}
+
+\newcommand{\mymagicentryymap}[9][]{%
+% 1 - Defaultbelegung fuer optionalen Parameter
+% 2 - Name fuer Macro
+% 3 - Symbol fuer Macro (fuer Gebrauch im Text)
+% 4 - Alternatives Symbol fuer Glossar
+% 5 - Definition der Abbildung (Anfang im Glossar)
+% 6 - Name des definierten Begriffs
+% 7 - Alternatives Symbol fuer Table of Notation
+% 8 - Buchstabe fuer Table of Notation
+% 9 - Die Definition 
+\fullentryymap[{#1}]{#2}{#3}{#4}{#5}{#6}{#9}
+\addmyentrytoton{#8}{#7}{#2}
+}
+% 2 - Name fuer Macro
+% 3 - Definitoin
+% 4 - Name
+% 5 - Alternatives Symbol fuer Table of Notation
+% 6 - Buchstabe fuer Table of Notation
+% 7 - Die Defintion
+\newcommand{\mymagiconlyentryy}[7][]{%
+    \onlyentryy[#1]{#2}{#3}{#7}
+
+    \expandafter\providecommand\csname #2defaultsym\endcsname{\ensuremath{#3}}
+    \expandafter\providecommand\csname #2name\endcsname{\entrylink{#2}{#4}\xspace}
+    \addmyentrytoton{#6}{#5}{#2}
+}
+
+
+\newcommand{\magicentryyns}[7][]{%
+% Parameter: [Defaultbelegung fuer optionalen Parameter fuer das zu erzeugende Macro]
+%              {Name des Macros} {Inhalt des Macros} {Alternativer Inhalt des Macros Definition}{Glossar Buchstabe} {Ausfuerhliche Bezeichnung} {Definitionstext}
+\fullentryyns[#1]{#2}{#3}{#4}{#5}{#7}
+\addentrytoton{#6}{#2}
+}
+
+\newcommand{\magicentryy}[7][]{%
+% 1 - Defaultbelegung fuer optionalen Parameter fuer das zu erzeugende Macro
+% 2 - Name des Macros
+% 3 - Symbol fuer Macro (die Definition des Macro)
+% 4 - Alternatives Symbol fuer Glossar
+%  {Ausfuerhliche Bezeichnung} 
+% 6 - Die mathematische Definition
+\fullentryy[#1]{#2}{#3}{#4}{#5}{#7}
+\addentrytoton{#6}{#2}
+}
+
+\newcommand{\magicentryyeq}[8][]{%
+% 1 - Defaultbelegung fuer optionalen Parameter
+% 2 - Name fuer Macro
+% 3 - Definition fuer Macro (fuer Gebrauch im Text)
+% 4 - Alternative Defintion fuer Glossar
+% 5 - Definition der Gleichung (Anfang im Glossar)
+% 6 - Name des definierten Begriffs
+% 7 - Glossar Buchstabe
+% 8 - Die Definition 
+\fullentryyeq[#1]{#2}{#3}{#4}{#5}{#6}{#8}
+\addentrytoton{#7}{#2}
+}
+
+\newcommand{\magicentryymap}[8][]{%
+% 1 - Defaultbelegung fuer optionalen Parameter
+% 2 - Name fuer Macro
+% 3 - Definition fuer Macro (fuer Gebrauch im Text)
+% 4 - Alternative Defintion fuer Glossar
+% 5 - Definition der Abbildung (Anfang im Glossar)
+% 6 - Name des definierten Begriffs
+% 7 - Glossar Buchstabe
+% 8 - Die Definition 
+\fullentryymap[{#1}]{#2}{#3}{#4}{#5}{#6}{#8}
+\addentrytoton{#7}{#2}
+}
+
+% 2 - Name fuer Macro
+% 3 - Definitoin
+% 4 - Name
+% 5 - Glossar Buchstabe
+% 6 - Die Defintion
+\newcommand{\magiconlyentryy}[6][]{%
+    % \oneforall[#1]{#2}{%
+    %   \ensuremath{#3}\dist
+    %   #6%
+    % }
+    \onlyentryy[#1]{#2}{#3}{#6}
+    \expandafter\providecommand\csname #2defaultsym\endcsname{\ensuremath{#3}}
+    \expandafter\providecommand\csname #2name\endcsname{\entrylink{#2}{#4}\xspace}
+    \addentrytoton{#5}{#2}
+}
+
+\newcommand{\fullentryyeq}[7][]{%
+  \newentryyeq[#1]{#2}{#3}{#4}{#5}{#7}
+   \ifx\\#4\\ % keine alternative Bezeichung fuer den Term
+      \createtextmacros{#1}{#2}{#3}{#6}
+  \else
+      \createtextmacros{#1}{#2}{#4}{#6}
+  \fi
+}
+
+\newcommand{\fullentryymap}[7][]{%
+% 1 - Defaultbelegung fuer optionalen Parameter
+% 2 - Name fuer Macro
+% 3 - Definition fuer Macro (fuer Gebrauch im Text)
+% 4 - Alternative Defintion fuer Glossar
+% 5 - Definition der Abbildung (Anfang im Glossar)
+% 6 - Name des definierten Begriffs
+% 7 - Die Definition 
+  \newentryymap[#1]{#2}{#3}{#4}{#5}{#7}
+   \ifx\\#4\\ % keine alternative Bezeichung fuer den Term
+      \createtextmacros[{#5}]{#1}{#2}{#3}{#6}
+  \else
+      \createtextmacros[{#5}]{#1}{#2}{#4}{#6}
+  \fi
+}%
+
+
+
+\newcommand{\fullentryy}[6][]{%
+% Parameter: [Defaultbelegung fuer optionalen Parameter fuer das zu erzeugende Macro]
+%              {Name des Macros} {Inhalt des Macros} {Alternativer Inhalt des Macros Definition} {Ausfuerhliche Bezeichnung} {Definitionstext}
+  \newentryy[#1]{#2}{#3}{#4}{#6}
+   \ifx\\#4\\ % keine alternative Bezeichung fuer den Term
+      \createtextmacros{#1}{#2}{#3}{#5}
+  \else
+      \createtextmacros{#1}{#2}{#4}{#5}
+  \fi
+}%
+
+\newcommand{\fullentryyns}[6][]{%
+% Parameter: [Defaultbelegung fuer optionalen Parameter fuer das zu erzeugende Macro]
+%              {Name des Macros} {Inhalt des Macros} {Alternativer Inhalt des Macros Definition} {Ausfuerhliche Bezeichnung} {Definitionstext}
+    \newentryyns[#1]{#2}{#3}{#4}{#6}
+     \ifx\\#4\\ % keine alternative Bezeichung fuer den Term
+        \createtextmacros{#1}{#2}{#3}{#5}
+    \else
+        \createtextmacros{#1}{#2}{#4}{#5}
+    \fi
+}%
+
+\newcommand{\onlyentryy}[4][]{
+    \inituml{#2}
+    \oneforevenmore[#1]{#2}{\ensuremath{#3}}{\dist #4}
+}
+
+\newcommand{\newentryy}[5][]{%
+  \inituml{#2}
+  \ifx\\#4\\ % keine alternative Bezeichung fuer die Definition
+    \oneforevenmore[#1]{#2}{\ensuremath{#3}}{\dist #5}
+  \else
+    \oneforevenmore[#1]{#2}{\ensuremath{#4}}{\dist #5}
+  \fi
+   \createmacro{#1}{#2}{#3}
+}%
+   
+\newcommand{\newentryyns}[5][]{%
+    \inituml{#2}
+    \ifx\\#4\\ % keine alternative Bezeichung fuer die Definition
+          \oneforevenmore[#1]{#2}{\ensuremath{#3}}{\kern 1ex #5}
+    \else
+          \oneforevenmore[#1]{#2}{\ensuremath{#4}}{\kern 1ex #5}
+    \fi
+    \createmacro{#1}{#2}{#3}
+}%
+      
+\newcommand{\newentryymap}[6][]{%
+    \inituml{#2}
+    \ifx\\#4\\ % keine alternative Bezeichung fuer die Definition
+      \oneforevenmore[#1]{#2}{\ensuremath{#3}#5}{\dist#6}
+    \else
+      \oneforevenmore[#1]{#2}{\ensuremath{#4}#5}{\dist#6}
+    \fi
+      \createmacro{#1}{#2}{#3}}%
+      
+\newcommand{\newentryyeq}[6][]{%
+    \inituml{#2}
+    \ifx\\#4\\ % keine alternative Bezeichung fuer die Definition
+      \oneforevenmore[#1]{#2}{\ensuremath{#3}#5}{\dist#6}
+    \else
+        \oneforevenmore[#1]{#2}{\ensuremath{#4}#5}{\dist#6}
+    \fi
+      \createmacro{#1}{#2}{#3}}%
+
+\newcommand{\umlinit}{}
+
+\newcommand{\inituml}[1]{\expandafter\providecommand\csname uml#1\endcsname{}}
+
+\mdfdefinestyle{treeboxstyle}{innerleftmargin=4pt,innerrightmargin=3pt,innerbottommargin=2pt,innertopmargin=2pt,align=center,nobreak,topline=true,rightline=true,leftline=true}
+
+
+\newsavebox\MyTempBox
+\NewEnviron{defframe}{%
+\savebox\MyTempBox{%
+\begin{varwidth}{\linewidth}
+\BODY%
+\end{varwidth}}%
+\begin{minipage}{\dimexpr\wd\MyTempBox+8pt\relax}
+\begin{mdframed}[style=treeboxstyle,userdefinedwidth=\dimexpr\wd\MyTempBox+8pt\relax]
+\BODY%
+\end{mdframed}%
+\end{minipage}}
+
+% erzeugt das makro fuer die vollstaendige Glossardefinition
+\newcommand{\oneforevenmore}[4][]{
+    \ifx\\#1\\%empty     % wenn es keinen Defaultwert fuer einen optionalen Parameter gibt, muessen moegliche Parameter in der Definition bereits durch einen alternative parameterlose Definition ersetzt worden sein.
+        \expandafter\newcommand\csname defcontent#2x\currentletter\endcsname{#4}
+        \expandafter\newcommand\csname defkey#2x\currentletter\endcsname{\begin{defframe}\strut#3\end{defframe}}
+        \expandafter\newcommand\csname def#2x\currentletter\endcsname{%
+          %\setdeftarget{#2}%\target{gls\csname uml#2\endcsname x#2}%
+          %\kern-0.5ex\fbox{#3}#4%
+          %\kern-0.5ex \begin{minipage}{3cm}\begin{defframe}#3\end{defframe}\end{minipage}#4%
+          \kern-0.5ex \begin{defframe}\strut#3\end{defframe}#4%
+        }%
+        % \expandafter\newcommand\csname hangdef#2x\currentletter\endcsname{%
+        %           %\setdeftarget{#2}%\target{gls\csname uml#2\endcsname x#2}%
+        %           \kern-0.5ex\fbox{#3}{\hangindent=0.5cm #4}%
+        %         }%
+    \else%
+        \expandafter\newcommand\csname defcontent#2x\currentletter\endcsname[\value{para}][#1]{#4}
+        %\expandafter\newcommand\csname defkey#2x\currentletter\endcsname[\value{para}][#1]{\fbox{#3}}
+        \expandafter\newcommand\csname defkey#2x\currentletter\endcsname[\value{para}][#1]{\begin{defframe}\strut#3\end{defframe}}
+        \expandafter\newcommand\csname def#2x\currentletter\endcsname[\value{para}][#1]{%
+          %\setdeftarget{#2}%\target{gls\csname uml#2\endcsname x#2}%
+          %\kern-0.5ex\fbox{#3}#4%
+          \kern-0.5ex \begin{defframe}\strut#3\end{defframe}#4%
+        }%
+        % \expandafter\newcommand\csname hangdef#2x\currentletter\endcsname[\value{para}][#1]{%
+        %           %\setdeftarget{#2}%\target{gls\csname uml#2\endcsname x#2}%
+        %           \kern-0.5ex\fbox{#3}{\hangindent=0.5cm #4}%
+        % }%
+    \fi}
+
+
+
+
+% 
+% \makeatletter
+% \newcommand{\myglslabel}[1]{
+%     \@ifundefined{r@glls#1}{\label{glls#1}}{}
+% }
+% \makeatother
+
+% Setzt target fuer Glossareintraege im Tree of Notations    
+% \newcommand{\settontarget}[1]{%
+%   \currentletter
+%   gls\csname uml#1\endcsname x#1
+%   \target{gls\csname uml#1\endcsname x#1}
+%   \myglslabel{\csname uml#1\endcsname x#1}
+% }    
+    
+\newcommand{\setdeftarget}[1]{%
+    % 
+    % \else  % aller erste definition
+    \ifcsname alreadydef#1\endcsname%
+    \else%
+      \expandafter\xdef\csname alreadydef#1\endcsname{true}%
+      %glsx#1
+      \target{glsx#1}%
+    \fi%
+    %\currentletter
+    %gls\csname uml#1\endcsname x#1
+    \target{gls\csname uml#1\endcsname x#1}%
+    \label{glls\csname uml#1\endcsname x#1}%
+%    \@ifundefined{r@#1}{\target{gls#1}\label{glls#1}}{}
+    %   \expandafter\gdef\csname alreadydef#1\endcsname{true}
+    % \fi
+    % \expandafter\ifx\csname uml#1\endcsname\umlinit
+    % \else
+    %   \target{gls\csname uml#1\endcsname x#1}
+    % \fi
+    % gls\csname uml#1\endcsname x#1
+}
+    
+
+
+\newcommand{\addtoton}[2]{\expandafter\gappto\csname #1ton\endcsname{#2}}
+
+
+\newcommand{\linkortarget}[1]{\protect{%
+    \protect\ifcsname alreadydef#1\endcsname%
+    \protect\getpagerefnumber{glls\csname uml#1\endcsname x#1}%
+  \else%
+    \protect\target{glsx#1}%
+  \fi}%
+}
+
+
+\newcommand{\addentrytoton}[2]{\addtoton{#1}{\csname #2defaultsym\endcsname & \csname #2name\endcsname & {\protect\linkortarget{#2}}\\}}
+\newcommand{\addmyentrytoton}[3]{\addtoton{#1}{#2 & \csname #3name\endcsname & \protect\linkortarget{#3}\\}}
+
+
+\newcommand{\deftarget}[1]{}
+% alreadydef wird nicht gesetzt, damit beim Eintrag sowohl der globale als auch der ton target gesetzt wird
+\newcommand{\settonuml}[1]{%
+  % \ifcsname alreadydef#1\endcsname
+  % \else
+  %   \expandafter\xdef\csname 
+  % \fi
+  
+  \expandafter\xdef\csname uml#1\endcsname{\currentletter} % neue Umleitung setzen 
+  %\else
+    %\expandafter\gdef\csname alreadydef#1\endcsname{true}
+   % \expandafter\gdef\csname uml#1\endcsname{}  %umlinit
+%  \expandafter\ifx\csname uml#1\endcsname\umlinit % der erste Eintrag fuer diese Definition, nichts veraenern
+  %\fi}
+}
+
+\newcommand{\setuml}[1]{%
+  %{\ifcsname alreadydef#1\endcsname%\relax
+    \expandafter\xdef\csname uml#1\endcsname{\currentletter} % neue Umleitung setzen 
+  %\else
+  %  \expandafter\gdef\csname alreadydef#1\endcsname{true}
+  %  \expandafter\gdef\csname uml#1\endcsname{}  %umlinit
+%  \expandafter\ifx\csname uml#1\endcsname\umlinit % der erste Eintrag fuer diese Definition, nichts veraenern
+ % \fi}
+}
+% 
+\newcommand{\addtotree}[1]{\expandafter\gappto\nextdeftree{#1}}
+
+\newcommand{\deflocaluml}[2]{%
+  \ifcsname alreadydef#1\endcsname
+  \expandafter\edef\csname uml#1\endcsname{\currentletter} % neue Umleitung setzen 
+  \else
+    \expandafter\gdef\csname alreadydef#1\endcsname{true}
+    \expandafter\gdef\csname uml#1\endcsname{}  %umlinit
+%  \expandafter\ifx\csname uml#1\endcsname\umlinit % der erste Eintrag fuer diese Definition, nichts veraenern
+  \fi
+  \expandafter\gappto\nextdeftree{#2\restoreuml{#1}}
+}
+
+% \connectnodes  % Der Baum soll Verbindungen bis zu den Knoten haben.
+% 
+\newcommand{\treerootfor}[1]{\connectedtreeroot{\getdef{#1}}{\getdefkey{#1}}}
+\newcommand{\treechildfor}[3][]{\connectedtreechild[#1]{#2}{\getdef{#3}}{\getdefkey{#3}}}
+
+
+\newcommand{\rootnodei}[1]{\setuml{#1}\addtotree{\treerootfor{#1}}}
+%\newcommand{\rootnodei}[1]{\setuml{#1}\addtotree{\treeroot{\hangindent=0.7cm \lipsum[1]}}}
+%\newcommand{\groupnodei}[1]{\setuml{#1}\addtotree{\treechild[\grouplink]{0}{\getdef{#1}}}}
+\newcommand{\groupnodei}[1]{\setuml{#1}\addtotree{\treechildfor[\grouplink]{0}{#1}}}
+
+\newcommand{\specialnodei}[2][1]{\setuml{#2}\addtotree{\treechildfor[\corollarylink]{#1}{#2}}}
+%\newcommand{\cornodei}[2][1]{\setuml{#2}\addtotree{\treechild[\corollarylink]{#1}{\getdef{#2}}}}   % Corollary-Node
+\newcommand{\cornodei}[2][1]{\setuml{#2}\addtotree{\treechildfor[\corollarylink]{#1}{#2}}}   % Corollary-Node
+\providecommand{\nodei}[2][1]{\setuml{#2}\addtotree{\treechildfor{#1}{#2}}}
+\newcommand{\subnodei}[1]{\nodei[2]{#1}}
+\newcommand{\subsubnodei}[1]{\nodei[3]{#1}}
+
+%\newcommand{\localrootnodei}[1]{\setuml{#1}\addtotree{\treeroot{\getlocaldef{#1}}}\restorelastuml{#1}}
+% getlocaldef ist nicht $(\noetig, weil get def sowieso localdef liefert falls exisitert
+\newcommand{\localrootnodei}[1]{\setuml{#1}\addtotree{\treerootfor{#1}\restorelastuml{#1}}}
+\newcommand{\localgroupnodei}[1]{\setuml{#1}\addtotree{\treechildfor[\grouplink]{0}{#1}\restorelastuml{#1}}}
+
+% 
+\newcommand{\rootnode}[1]{\settonuml{#1}\treerootfor{#1}}
+\newcommand{\groupnode}[1]{\settonuml{#1}\treechildfor[\grouplink]{0}{#1}}
+\newcommand{\specialnode}[2][1]{\settonuml{#2}\treechildfor[\corollarylink]{#1}{#2}}
+\newcommand{\cornode}[2][1]{\settonuml{#2}\treechildfor[\corollarylink]{#1}{#2}}   % Corollary-Node
+\providecommand{\node}[2][1]{\settonuml{#2}\treechildfor{#1}{#2}}
+\newcommand{\subnode}[1]{\node[2]{#1}}
+\newcommand{\subsubnode}[1]{\node[3]{#1}}
+
+
+\newenvironment{treedefine}[1]{\newconnectedtree\treeroot{\getdef{#1}}}{\noargotree\relax}
+\newenvironment{treedef}{\newconnectedtree}{\noargotree\relax}
+
+ 
+\def\nextdeftree{\mydeftree}
+%\newcommand{\thedeftree}{}
+\newenvironment{treepredef}[1][\mydeftree]{%
+\gdef\nextdeftree{#1}%
+%\expandafter\gappto\nextdeftree{\relax}%
+\gdef#1{\begin{treedef}\relax}}{\expandafter\gappto\nextdeftree{\end{treedef}}}
+
+\newenvironment{graphdefine}[1]{\newconnectedtree\treeroot{{#1}\vspace{-\baselineskip}}}{\noargotree\relax}  % Veraltet. Wird jetzt mit groupnode gemacht
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Lokale Definitionen %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (fold)
+\def\aster{*}
+\def\setolduml#1 {\def\one{#1}%
+\ifx\one\aster\let\go\relax
+\else\expandafter\edef\csname uml#1\endcsname{\currentletter}\let\go\setolduml
+\fi\go}
+
+
+% Speichert die letzte Umleitung
+\newcommand{\savelastuml}[1]{%
+  \expandafter\xdef\csname lastuml#1\endcsname{\csname uml#1\endcsname}
+  \expandafter\xdef\csname uml#1\endcsname{\currentletter}
+}
+% Stellt die letzte Umleitung wieder her
+\newcommand{\restorelastuml}[1]{%
+  \expandafter\xdef\csname uml#1\endcsname{\csname lastuml#1\endcsname}
+}
+
+\newcommand{\newlocalentry}[1][0]{\setcounter{para}{#1}\newlocalentryy}
+\newcommand{\newlocalentryns}[1][0]{\setcounter{para}{#1}\newlocalentryyns}
+\newcommand{\newlocalentrymap}[1][0]{\setcounter{para}{#1}\newlocalentryymap}
+\newcommand{\newlocalentryeq}[1][0]{\setcounter{para}{#1}\newlocalentryyeq}
+
+\newcommand{\newlocalentryy}[5][]{%
+  \savelastuml{#2}
+  \ifx\\#4\\ % keine alternative Bezeichung fuer die Definition
+    \oneforevenmore[#1]{#2}{\ensuremath{#3}}{\dist #5}
+  \else
+    \oneforevenmore[#1]{#2}{\ensuremath{#4}}{\dist #5}
+  \fi
+   \createmacro{#1}{#2}{#3}
+}%
+\newcommand{\newlocalentryyns}[5][]{%
+    \savelastuml{#2}
+    \ifx\\#4\\ % keine alternative Bezeichung fuer die Definition
+          \oneforevenmore[#1]{#2}{\ensuremath{#3}}{#5}
+    \else
+          \oneforevenmore[#1]{#2}{\ensuremath{#4}}{#5}
+    \fi
+    \createmacro{#1}{#2}{#3}
+}%
+\newcommand{\newlocalentryymap}[6][]{%
+      \savelastuml{#2}
+    \ifx\\#4\\ % keine alternative Bezeichung fuer die Definition
+      \oneforevenmore[#1]{#2}{\ensuremath{#3}#5}{\dist#6}
+    \else
+      \oneforevenmore[#1]{#2}{\ensuremath{#4}#5}{\dist#6}
+    \fi
+      \createmacro{#1}{#2}{#3}
+}%
+\newcommand{\newlocalentryyeq}[6][]{%
+    \savelastuml{#2}
+    \ifx\\#4\\ % keine alternative Bezeichung fuer die Definition
+    \oneforevenmore[#1]{#2}{\ensuremath{#3}#5}{\dist#6}
+    \else
+        \oneforevenmore[#1]{#2}{\ensuremath{#4}#5}{\dist#6}
+    \fi
+      \createmacro{#1}{#2}{#3}
+}%
+
+
+\gdef\restorecommands{\restoretemp\gdef\restoretemp{}}
+\gdef\restoretemp{}
+\newcommand{\newlocalcommand}[3]{%   {\Macroname}{\Macroname unter dem das alte Macro zwischengespeichert werden soll}{Macrocode}
+   \let#2#1%
+   \gdef#1{#3}%
+   \gappto\restoretemp{\let#1#2}%
+}
+
+\newcommand{\uselocalentries}[1]{\edef\currentletter{\statealph{#1}}}
+   
+\newcommand{\getdef}[1]{%
+\ifcsname def#1x\currentletter\endcsname
+\setdeftarget{#1}\csname def#1x\currentletter\endcsname
+\else\setdeftarget{#1}\csname def#1x\endcsname\fi}
+
+\newcommand{\getdefkey}[1]{%
+\ifcsname defkey#1x\currentletter\endcsname
+\csname defkey#1x\currentletter\endcsname
+\else\csname defkey#1x\endcsname\fi}
+
+
+
+\newcommand{\gethangingdef}[1]{%
+%\ifcsname hangdef#1x\currentletter\endcsname
+\setdeftarget{#1}\kern-0.5ex\fbox{\csname defkey#1x\endcsname}{\expandafter\hangindent=0.7cm \csname defcontent#1x\endcsname
+}
+%\else\setdeftarget{#1}\csname hangdef#1x\endcsname\fi
+}
+
+
+\newcommand{\getlocaldef}[1]{\csname def#1x\currentletter\endcsname{}}
+
+\newcommand{\csmacroproblem}[1]{\csname #1\endcsname{}}
+
+\def\using{* }
+\newcommand{\uses}[2]{%
+\edef\currentletter{}
+\expandafter\setolduml\using
+\edef\currentletter{\statealph{#1}}
+\setolduml#2 * 
+\def\using{#2 * } 
+}
+% (end)
