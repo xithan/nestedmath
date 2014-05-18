@@ -214,7 +214,7 @@ def typeset_mainfile
   main_document = $1
   main_document.sub!(/\\bibliography\{[^}]*\}/, '')
   main_document.sub!(/\\bibliographystyle\{[^}]*\}/, '')
-  main_file.write($1)
+  main_file.write(main_document)
   close_file(main_file)
   typeset($mainfile)
   move_pdf($mainfile)

@@ -23,7 +23,7 @@
 
 var PATH = './pdf/';
 var START_PDF = 'main.pdf';
-var COMPLETE_VERSION = './pdf/download.pdf';
+var COMPLETE_VERSION = './pdf/main.pdf';
 var DEFAULT_URL = 'compressed.tracemonkey-pldi-09.pdf';
 var DEFAULT_SCALE = 'auto';
 var DEFAULT_SCALE_DELTA = 1.1;
