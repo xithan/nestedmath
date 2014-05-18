@@ -5,8 +5,8 @@ This is a collection of tools to create a nested view of mathematical proofs inc
 - a pdf viewer that assembles a collection of pdfs in a nested view (based on [pdf.js](https://github.com/mozilla/pdf.js/) )
 
 ### Online demo
-- http://surgery-hotel/nestedmath/viewer.html
-- http://surgery-hotel/web/viewer.html
+- [http://surgery-hotel/nestedmath/viewer.html](http://surgery-hotel/nestedmath/viewer.html)
+- [http://surgery-hotel/web/viewer.html](http://surgery-hotel/web/viewer.html)
 
 ### Usage
 - Edit `tex/example.tex` or adjust the paths at the top of `typeset.rb`
