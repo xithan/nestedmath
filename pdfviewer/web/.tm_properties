@@ -1,0 +1,6 @@
+excludeFiles = "!{*.js,*.css,*.html,*.log,*.tex,*.cls,*.bib,*.sh,*.sty,.tm_properties,*.rb,*.pdf,.gitignore,.liveview.log,Header}"
+
+#excludeDirectoriesInBrowser = ".*"
+#excludeInFolderSearch = ".*"
+
+includeFiles = "{liveview.log,*.js,*.css,*.tex,*.cls,*.bib,*.sh,*.sty,.tm_properties,*.rb,*.pdf,.gitignore,.liveview.log,Header}"
