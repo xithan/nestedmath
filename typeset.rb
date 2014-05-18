@@ -1,10 +1,7 @@
 # Erstellt fuer jede Definition und jeden Raum eine eigene PDF-Datei
 
-require 'byebug'
-
 # paths for input data
 $indir = "tex/"
-$bibfile = "example"
 $infile = "example"
 $bibfile = "example"
 $packagedir = "packages/"
