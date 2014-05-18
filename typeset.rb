@@ -212,6 +212,8 @@ def typeset_mainfile
   main_file = new_texfile($mainfile,:mathview)
   File.read($workdir+$infile+".tex").scan(/\\begin\{document\}(.*)\\end\{document\}/m)
   main_document = $1
+  main_document.sub!(/\\bibliography\{[^}]*\}/, '')
+  main_document.sub!(/\\bibliographystyle\{[^}]*\}/, '')
   main_file.write($1)
   close_file(main_file)
   typeset($mainfile)
