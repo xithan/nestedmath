@@ -10,6 +10,7 @@ It consists of
 - [http://surgery-hotel/web/viewer.html](http://surgery-hotel/web/viewer.html)
 
 ### Usage
+- [Download](https://github.com/xithan/nestedmath/archive/master.zip) this github repository.
 - Edit `tex/example.tex` or adjust the paths at the top of `typeset.rb`
 - Run 
 
