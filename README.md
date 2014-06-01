@@ -6,8 +6,8 @@ It consists of
 - a pdf viewer that assembles a collection of pdfs in a nested view (based on [pdf.js](https://github.com/mozilla/pdf.js/) )
 
 ### Online demo
-- [http://surgery-hotel/nestedmath/viewer.html](http://surgery-hotel/nestedmath/viewer.html)
-- [http://surgery-hotel/web/viewer.html](http://surgery-hotel/web/viewer.html)
+- [http://surgery-hotel.de/nestedmath/viewer.html](http://surgery-hotel.de/nestedmath/viewer.html)
+- [http://surgery-hotel.de/web/viewer.html](http://surgery-hotel.de/web/viewer.html)
 
 ### Usage
 - [Download](https://github.com/xithan/nestedmath/archive/master.zip) this github repository.
